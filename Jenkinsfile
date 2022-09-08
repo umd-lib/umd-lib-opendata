@@ -47,7 +47,7 @@ pipeline {
     EMAIL_CONTENT =
         '''$PROJECT_NAME - GIT_BRANCH_PLACEHOLDER - $BUILD_STATUS! - Build # $BUILD_NUMBER:
            |
-           |Check console output at $BUILD_URL to view the results.
+           |Check console output at $BUILD_URL to view the results.'''
   }
 
   stages {
