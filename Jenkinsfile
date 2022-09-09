@@ -95,7 +95,7 @@ pipeline {
         stage('Building docker image') {
           steps{
             script {
-              dockerImage = docker.build registry + ":dev_$BUILD_NUMBER"
+              dockerImage = docker.build registry + "opendata:dev_$BUILD_NUMBER"
             }
           }
         }
