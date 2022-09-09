@@ -87,7 +87,7 @@ pipeline {
       }
       environment{
         registry = "docker.lib.umd.edu"
-        registryUrl = "https://" + registry
+        registryUrl = "https://" + "$registry"
         registryCredential = 'umd-nexus-lib-ssdr'        
       }
       
