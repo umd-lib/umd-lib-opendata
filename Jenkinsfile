@@ -87,6 +87,7 @@ pipeline {
       }
       environment{
         registry = "docker.lib.umd.edu"
+        registryUrl = "https://" + registry
         registryCredential = 'umd-nexus-lib-ssdr'        
       }
       
@@ -101,7 +102,7 @@ pipeline {
         stage('Deploying docker image') {
           steps {
             script {
-                docker.withRegistry( registry, registryCredential ) {
+                docker.withRegistry( registryUrl, registryCredential ) {
                 dockerImage.push()
               }
             }
