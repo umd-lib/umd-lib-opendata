@@ -111,9 +111,8 @@ pipeline {
         stage('Deploy the changes') {
           steps {
             script {
-                withCredentials([file(credentialsId: 'k8s-tc-sandbox-kubeconfig', variable: 'FILE')]) {
-                  sh 'head -2 $FILE'
-                }
+              withCredentials([file(credentialsId: 'k8s-tc-sandbox-kubeconfig', variable: 'FILE')]) {
+                sh 'head -2 $FILE'
               }
             }
           }
