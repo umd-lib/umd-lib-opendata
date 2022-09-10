@@ -99,11 +99,21 @@ pipeline {
             }
           }
         }
-        stage('Deploying docker image') {
+        stage('Pushing docker image to registry') {
           steps {
             script {
                 docker.withRegistry( registryUrl, registryCredential ) {
                 dockerImage.push()
+              }
+            }
+          }
+        }
+        stage('Deploy the changes') {
+          steps {
+            script {
+                withCredentials([file(credentialsId: 'k8s-tc-sandbox-kubeconfig', variable: 'FILE')]) {
+                  sh 'head -2 $FILE'
+                }
               }
             }
           }
