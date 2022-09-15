@@ -116,7 +116,7 @@ pipeline {
                 rm $FILE
               }
               withCredentials([gitUsernamePassword(credentialsId: 'lib-ssdr-jenkins-username-with-password', gitToolName: 'git-tool')]) {
-                sh 'git clone https://github.com/umd-lib/k8s-opendata.git --branch main-cd
+                sh 'git clone https://github.com/umd-lib/k8s-opendata.git --branch main-cd'
               }
 
               docker.image('line/kubectl-kustomize:1.24.4-4.5.7').inside() {
