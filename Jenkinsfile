@@ -113,17 +113,20 @@ pipeline {
             script {
               withCredentials([file(credentialsId: 'k8s-tc-sandbox-kubeconfig', variable: 'FILE')]) {
                 sh 'cp $FILE ./kubeconfig'
-                sh 'git clone git@github.com:umd-lib/k8s-opendata.git'
-
-                docker.image('line/kubectl-kustomize:1.24.4-4.5.7').inside() {
-                    sh 'ls .'
-                    sh "kubectl --kubeconfig=./kubeconfig -n sandbox get pod"
-                    sh "echo Build number: $BUILD_NUMBER"
-                    sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set image docker.lib.umd.edu/opendata:$BUILD_NUMBER"
-                }
-
-                sh 'rm $FILE ./kubeconfig'
+                rm $FILE
               }
+              withCredentials([gitUsernamePassword(credentialsId: 'lib-ssdr-jenkins-username-with-password', gitToolName: 'git-tool')]) {
+                sh 'git clone https://github.com/umd-lib/k8s-opendata.git --branch main-cd
+              }
+
+              docker.image('line/kubectl-kustomize:1.24.4-4.5.7').inside() {
+                  sh 'ls .'
+                  sh "kubectl --kubeconfig=./kubeconfig -n sandbox get pod"
+                  sh "echo Build number: $BUILD_NUMBER"
+                  sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set image docker.lib.umd.edu/opendata:$BUILD_NUMBER"
+              }
+
+              sh 'rm ./kubeconfig k8s-opendata'
             }
           }
         }
