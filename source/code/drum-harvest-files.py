@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 import re
 import urllib.parse
+import os.path
 
 import requests
 import yaml
@@ -18,6 +19,15 @@ import yaml
 
 ENDPOINT = 'https://drum.lib.umd.edu'
 
+# Harvest files with these extensions
+EXTENSION_INCLUDES = set([
+    'pdf', 'xml', 'txt', 'asc', 'htm', 'html', 'doc', 'ppt', 'xls', 'pptx', 'rtf',
+    'fm', 'ps', 'eps', 'ai', 'ma', 'latex', 'tex', 'dvi', 'sgm', 'sgml', 'wpd',
+    'docx', 'docm', 'ppam', 'ppsm', 'ppsx', 'pptx', 'xlam', 'xslx', 'odt', 'odm',
+    'odg', 'odp', 'ods', 'odc', 'odf', 'odb', 'odi', 'oxt', 'sxw', 'sxc', 'sxd',
+    'sxi', 'sxg', 'sxm', 'sdw', 'sgl', 'sdc', 'sda', 'sdd', 'sdp', 'smf', 'sds',
+    'sdm', 'rdf', 'epub'
+])
 
 def harvest(url: str):
     ''' Harvest the binaries for one DRUM item. '''
@@ -54,18 +64,22 @@ def harvest(url: str):
         # Is this file allowed for anonymous download?
         if allowed == 'y':
 
-            file_url = ENDPOINT + file_url
-            file_name = urllib.parse.unquote(file_name)
+            # Does the file have an extension we want to include?
+            _, file_extension = os.path.splitext(file_name)
+            if file_extension[1:].lower() in EXTENSION_INCLUDES:
 
-            file = temp_dir / file_name
+                file_url = ENDPOINT + file_url
+                file_name = urllib.parse.unquote(file_name)
 
-            print(f'  downloading {file_url} to {file}')
+                file = temp_dir / file_name
 
-            # Download via chunked streaming
-            response = requests.get(file_url, stream=True)
-            with open(file, 'wb') as fd:
-                for chunk in response.iter_content(chunk_size=1024):
-                    fd.write(chunk)
+                print(f'  downloading {file_url} to {file}')
+
+                # Download via chunked streaming
+                response = requests.get(file_url, stream=True)
+                with open(file, 'wb') as fd:
+                    for chunk in response.iter_content(chunk_size=1024):
+                        fd.write(chunk)
 
     # Rename the temp directory to the item directory
     # This indicates the downloads for this item are complete
