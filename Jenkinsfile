@@ -113,7 +113,7 @@ pipeline {
             script {
               withCredentials([file(credentialsId: 'k8s-tc-sandbox-kubeconfig', variable: 'FILE')]) {
                 sh 'cp $FILE ./kubeconfig'
-                rm $FILE
+                sh 'rm $FILE'
               }
               withCredentials([gitUsernamePassword(credentialsId: 'lib-ssdr-jenkins-username-with-password', gitToolName: 'git-tool')]) {
                 sh 'git clone https://github.com/umd-lib/k8s-opendata.git --branch main-cd'
