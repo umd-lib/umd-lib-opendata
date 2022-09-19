@@ -123,10 +123,12 @@ pipeline {
                   sh 'ls .'
                   sh "kubectl --kubeconfig=./kubeconfig -n sandbox get pod"
                   sh "echo Build number: $BUILD_NUMBER"
-                  sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set image docker.lib.umd.edu/opendata:$BUILD_NUMBER"
+                  sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set image docker.lib.umd.edu/opendata:dev_$BUILD_NUMBER"
+                  sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set label git-hash:$GIT_COMMIT"
+                  sh "cd k8s-opendata && kubectl apply -k overlays/sandbox-cd"
               }
 
-              sh 'rm ./kubeconfig k8s-opendata'
+              sh 'rm -rf ./kubeconfig k8s-opendata'
             }
           }
         }
