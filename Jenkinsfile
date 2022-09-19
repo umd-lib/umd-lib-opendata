@@ -121,7 +121,6 @@ pipeline {
 
               docker.image('line/kubectl-kustomize:1.24.4-4.5.7').inside() {
                   sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set image docker.lib.umd.edu/opendata:dev_$BUILD_NUMBER"
-                  sh "cd k8s-opendata/overlays/sandbox-cd && kustomize edit set label git-hash:$GIT_COMMIT"
                   sh "cd k8s-opendata && kubectl --kubeconfig=../kubeconfig apply -k overlays/sandbox-cd"
               }
 
