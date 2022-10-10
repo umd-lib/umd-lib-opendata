@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-University of Maryland Libraries Open Data - CD Instance
-========================================================
+University of Maryland Libraries Open Data
+==========================================
 
 This collection of `open data <https://en.wikipedia.org/wiki/Open_data>`_ resources was created to promote the use of open data resources created by the UMD Libraries and made available to our community through strategic partnerships. The Libraries is committed to promoting equitable, open, and transparent scholarship in order to further the university's strategic commitment to partner to advance the common good and to take on humanity's grand challenges.
 
