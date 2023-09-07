@@ -1,11 +1,11 @@
 APIs
-====
+####
 
 Introduction to various Application Programming Interfaces (API) available
 for dynamic query of our services.
 
 OAI-PMH
--------
+=======
 
 From the `OAI-PMH <https://www.openarchives.org/pmh/>`_ home page:
 
@@ -18,7 +18,7 @@ From the `OAI-PMH <https://www.openarchives.org/pmh/>`_ home page:
 For more information see `<https://www.openarchives.org/pmh/>`_.
 
 OpenSearch
------------
+==========
 
 From the `OpenSearch <https://en.wikipedia.org/wiki/OpenSearch>`_ Wikipedia
 entry:
@@ -32,7 +32,7 @@ For more information see the `OpenSearch specification
 <https://github.com/dewitt/opensearch>`_.
 
 DSpace REST API
----------------
+===============
 
 DSpace REST API, first introduced in DSpace version 7. For more information see
 `DSpace 7 REST API <https://wiki.lyrasis.org/display/DSPACE/DSpace+7+REST+API>`_.
