@@ -15,7 +15,7 @@ long-term preservation.
 OAI-PMH
 -------
 
-Endpoint: ``https://api.drum.lib.umd.edu/server/oai/request``
+Endpoint: `<https://api.drum.lib.umd.edu/server/oai/request>`_
 
 Example:
 
@@ -37,7 +37,7 @@ Additional Examples:
 OpenSearch
 -----------
 
-Endpoint: ``https://api.drum.lib.umd.edu/server/opensearch/search``
+Endpoint: `<https://api.drum.lib.umd.edu/server/opensearch/search>`_
 
 Example: :download:`drum-search.py <code/drum-search.py>`
 
@@ -46,7 +46,7 @@ Example: :download:`drum-search.py <code/drum-search.py>`
 DSpace REST API
 -----------------
 
-Endpoint: ``https://api.drum.lib.umd.edu/server/api``
+Endpoint: `<https://api.drum.lib.umd.edu/server/api>`_
 
 The endpoint is explorable using the `HAL <http://stateless.co/hal_specification.html>`_
 Browser at `<https://api.drum.lib.umd.edu/server>`_.
