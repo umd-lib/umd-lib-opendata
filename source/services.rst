@@ -159,3 +159,19 @@ Endpoint: `<https://archive.org/advancedsearch.php>`_
 Example: :download:`code/internet-archive-search.py <code/internet-archive-search.py>`
 
 .. literalinclude:: code/internet-archive-search.py
+
+Dryad
+================
+
+UMD is a member of the `Dryad Data Community <https://datadryad.org/>`_, which is a community-owned resource that offers data curation services in addition to large storage capacity for most kinds of datasets in any discipline. A search is available with a limit to the `University of Maryland, College Park Institution <https://datadryad.org/search?f%5Bdryad_author_affiliation_name_sm%5D%5B%5D=University+of+Maryland%2C+College+Park>`_.  You can find more information on the `UMD Libraries website <https://www.lib.umd.edu/research/oss/publishing-and-digital-projects/repository-services/open-data-repositories>`_.
+
+OpenAPI Specification
+---------------------
+
+The Dryad API is built using the :any:`OpenAPI Specification <APIs OpenAPI Specification>`, with both `YAML-based <https://datadryad.org/openapi.yml>`_ and `HTML-based <https://datadryad.org/api/v2/docs/>`_ documentation available.
+
+Endpoint: `<https://datadryad.org/api/v2/>`_
+
+Example: :download:`code/dryad-search.py <code/dryad-search.py>`
+
+.. literalinclude:: code/dryad-search.py

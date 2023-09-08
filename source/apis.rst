@@ -36,3 +36,10 @@ DSpace REST API
 
 DSpace REST API, first introduced in DSpace version 7. For more information see
 `DSpace 7 REST API <https://wiki.lyrasis.org/display/DSPACE/DSpace+7+REST+API>`_.
+
+.. _APIs OpenAPI Specification:
+
+OpenAPI Specification
+=====================
+
+The `OpenAPI Specification <https://spec.openapis.org/oas/latest.html>`_ (OAS) defines a standard, programming language-agnostic interface description for HTTP APIs, which allows both humans and computers to discover and understand the capabilities of a service without requiring access to source code, additional documentation, or inspection of network traffic. When properly defined via OpenAPI, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interface descriptions have done for lower-level programming, the OpenAPI Specification removes guesswork in calling a service.
