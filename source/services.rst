@@ -172,6 +172,6 @@ The Dryad API is built using the :any:`OpenAPI Specification <APIs OpenAPI Speci
 
 Endpoint: `<https://datadryad.org/api/v2/>`_
 
-Example: :download:`code/dryad-search.py <code/dryad-search.py>`
+Example: :download:`code/dryad-api.py <code/dryad-api.py>`
 
-.. literalinclude:: code/dryad-search.py
+.. literalinclude:: code/dryad-api.py
