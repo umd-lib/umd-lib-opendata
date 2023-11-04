@@ -33,7 +33,6 @@ Additional Examples:
 
 - :download:`drum-oaipmh.py <code/drum-oaipmh.py>` Use OAI-PMH to harvest metadata in DRUM.
 
-
 OpenSearch
 -----------
 
@@ -60,7 +59,7 @@ Additional Example:
 Digital Collections
 ===================
 
-`University of Maryland Libraries' Digital Collections <https://digital.lib.umd.edu>`_
+`University of Maryland Libraries' Digital Collections <https://digital.lib.umd.edu>`_ (Legacy Repository)
 
 OAI-PMH
 -------
@@ -106,6 +105,27 @@ Example:
 Example: :download:`digital-collections-av-search.py <code/digital-collections-av-search.py>`
 
 .. literalinclude:: code/digital-collections-av-search.py
+
+OAI-PMH
+-------
+
+Endpoint: ``https://api.av.lib.umd.edu/oai/api``
+
+Example:
+
+::
+
+    #!/bin/bash
+
+    curl "https://api.av.lib.umd.edu/oai/api?verb=Identify"
+
+    curl "https://api.av.lib.umd.edu/oai/api?verb=ListSets"
+
+    curl "https://api.av.lib.umd.edu/oai/api?verb=ListMetadataFormats"
+
+Additional Examples:
+
+- :download:`digital-collections-av-oaipmh.py <code/digital-collections-av-oaipmh.py>` Use OAI-PMH to harvest metadata in Digital Collections Audio/Video.
 
 BTAA Geoportal
 =======================================================
