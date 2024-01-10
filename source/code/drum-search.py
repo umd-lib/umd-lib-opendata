@@ -41,9 +41,9 @@ search(query='"Black Lives Matter"')
 
 
 # advisor is smela
-# collection is 1903/2795 (Mechanical Engineering ETDs)
-search(query='advisor:smela', scope='1903/2795')
+# collection is http://hdl.handle.net/1903/2795 (Mechanical Engineering ETDs)
+search(query='advisor:smela', scope='a96d44b7-57d2-46ed-80e9-98f316a82a19')
 
 
-# community is 1903/2278 (Library Staff Research Works)
-search(query='*:*', scope='1903/2278')
+# community is http://hdl.handle.net/1903/2278 (Library Staff Research Works)
+search(query='*:*', scope='14dd3089-86f9-4bac-949f-347e0c637984')
