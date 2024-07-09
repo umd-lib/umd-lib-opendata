@@ -59,12 +59,12 @@ Additional Example:
 Digital Collections
 ===================
 
-`University of Maryland Libraries' Digital Collections <https://digital.lib.umd.edu>`_ (Legacy Repository)
+`University of Maryland Libraries' Digital Collections <https://digital.lib.umd.edu>`_ (New Repository)
 
 OAI-PMH
 -------
 
-Endpoint: ``https://digital.lib.umd.edu/oaicat/OAIHandler``
+Endpoint: ``https://api.fcrepo.lib.umd.edu/oai/api``
 
 Example:
 
@@ -72,11 +72,15 @@ Example:
 
     #!/bin/bash
 
-    curl "https://digital.lib.umd.edu/oaicat/OAIHandler?verb=Identify"
+    curl "https://api.fcrepo.lib.umd.edu/oai/api?verb=Identify"
 
-    curl "https://digital.lib.umd.edu/oaicat/OAIHandler?verb=ListSets"
+    curl "https://api.fcrepo.lib.umd.edu/oai/api?verb=ListSets"
 
-    curl "https://digital.lib.umd.edu/oaicat/OAIHandler?verb=ListMetadataFormats"
+    curl "https://api.fcrepo.lib.umd.edu/oai/api?verb=ListMetadataFormats"
+
+Additional Examples:
+
+- :download:`digital-collections-oaipmh.py <code/digital-collections-oaipmh.py>` Use OAI-PMH to harvest metadata in Digital Collections.
 
 Digital Collections Audio/Video
 ===============================
