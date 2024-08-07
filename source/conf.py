@@ -93,6 +93,6 @@ html_sidebars = {
 
 # -- Options for sitemap extension -------------------------------------------
 
-html_baseurl = 'https://opendata.lib.umd.edu'
+html_baseurl = 'https://opendata.lib.umd.edu/'
 
 sitemap_url_scheme = "{link}"
