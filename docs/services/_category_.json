@@ -3,6 +3,6 @@
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "List of services with open data."
+    "description": "List of services, with their technologies, endpoints, and examples"
   }
 }

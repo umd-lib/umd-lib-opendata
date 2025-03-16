@@ -1,14 +1,10 @@
----
-sidebar_position: 1
----
-
 # Digital Collections
 
 <a href="https://digital.lib.umd.edu">University of Maryland Libraries' Digital Collections</a>
 
 ## OAI-PMH
 
-Endpoint: ``https://api.fcrepo.lib.umd.edu/oai/api``
+Endpoint: `https://api.fcrepo.lib.umd.edu/oai/api`
 
 Example:
 
@@ -22,5 +18,5 @@ Example:
 
 Additional Examples:
 
-* [digital-collections-oaipmh.py](pathname:///assets/code/digital-collections-oaipmh.py)
+* [digital-collections-oaipmh.py](pathname:///code/digital-collections-oaipmh.py)
 Use OAI-PMH to harvest metadata in Digital Collections.
