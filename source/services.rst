@@ -199,3 +199,14 @@ Endpoint: `<https://datadryad.org/api/v2/>`_
 Example: :download:`code/dryad-api.py <code/dryad-api.py>`
 
 .. literalinclude:: code/dryad-api.py
+
+Library Website Tools
+===================
+
+The library provides APIs to access information about physical spaces and hours.
+
+Endpoint: `<https://api.www.lib.umd.edu/api/libtools/>`_
+
+Find the documentation here with examples: `<https://api.www.lib.umd.edu/api/libtools/docs>`_
+
+.. literalinclude:: code/website-libtools-hours.py
