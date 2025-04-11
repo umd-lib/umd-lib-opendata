@@ -10,7 +10,7 @@ This collection of `open data <https://en.wikipedia.org/wiki/Open_data>`_ resour
 
 See also information about our `Open Scholarship Services <https://www.lib.umd.edu/research/oss>`_ and `Data Services <https://www.lib.umd.edu/research/data>`_
 
-Inline Python code examples are intended to be runnable in a Python 3.8+ environment using the `Python Standard Library <https://docs.python.org/3/library/>`_. Downloadable Python code examples may require `installation of external modules <https://github.com/umd-lib/umd-lib-opendata#python-environment>`_.
+Inline Python code examples are intended to be runnable in a Python 3.12+ environment using the `Python Standard Library <https://docs.python.org/3/library/>`_. Downloadable Python code examples may require `installation of external modules <https://github.com/umd-lib/umd-lib-opendata#python-environment>`_.
 
 .. toctree::
 
