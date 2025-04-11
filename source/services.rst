@@ -201,12 +201,19 @@ Example: :download:`code/dryad-api.py <code/dryad-api.py>`
 .. literalinclude:: code/dryad-api.py
 
 Library Website Tools
-===================
+=====================
 
-The library provides APIs to access information about physical spaces and hours.
+The UMD Libraries provides APIs to access information about physical spaces and hours.
+
+Libtools REST API
+-----------------
+
+The Libtools API provides access to information about Libraries' spaces and hours. It is a RESTful API that returns JSON data.
 
 Endpoint: `<https://api.www.lib.umd.edu/api/libtools/>`_
 
 Find the documentation here with examples: `<https://api.www.lib.umd.edu/api/libtools/docs>`_
+
+Example: :download:`code/website-libtools-hours.py <code/website-libtools-hours.py>`
 
 .. literalinclude:: code/website-libtools-hours.py
