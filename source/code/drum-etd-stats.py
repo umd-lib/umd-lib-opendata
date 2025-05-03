@@ -5,28 +5,39 @@ import json
 import time
 
 
-ENDPOINT = 'https://api.drum-qa.lib.umd.edu/server/api'
-# ENDPOINT = 'https://api.drum.lib.umd.edu/server/api'
+# ENDPOINT = 'https://api.drum-qa.lib.umd.edu/server/api'
+ENDPOINT = 'https://api.drum.lib.umd.edu/server/api'
+
+# Accession count by year
+stats = {}
 
 # Get a list of item in the Electronic Theses and Dissertations collection
+
+# def process_bundle(bundle):
+#     if bundle['name'] == 'ORIGINAL':
+#         bitstreams_url = bundle['_links']['bitstreams']['href']
+#         print(bitstreams_url)
+#         with urllib.request.urlopen(bitstreams_url) as request:
+#             bitstreams = json.loads(request.read())
+#             for bitstream in bitstreams['_embedded']['bitstreams']:
+#                 size_bytes = int(bitstream['sizeBytes'])
+#                 print(size_bytes)
+
 
 def process_item(item):
     bundles_url = item['_links']['bundles']['href']
     print(bundles_url)
     with urllib.request.urlopen(bundles_url) as request:
-        bundles = json.loads(request.read())
-        # print(bundles)
-
+        # bundles = json.loads(request.read())
         # for bundle in bundles['_embedded']['bundles']:
-        #     if bundle['name'] == 'ORIGINAL':
-        #         bitstreams_url = bundle['_links']['bitstreams']
-        #         with urllib.request.urlopen(bitstreams_url) as request:
-        #             bitstreams = json.loads(request.read())
-        #             for bitstream in bitstreams['_embedded']['bitstreams']:
-        #                 if bitstream['bundleName'] == 'ORIGINAL':
-        #                     print(bitstream['uuid'])
+        #     process_bundle(bundle)
 
-items_url = ENDPOINT + '/discover/search/objects?scope=ba3ddc3f-7a58-4fd3-bde5-304938050ea2'
+        year_accessioned = item['metadata']['dc.date.accessioned'][0]['value'][0:4]
+        if year_accessioned not in stats:
+            stats[year_accessioned] = 0
+        stats[year_accessioned] += 1
+
+items_url = ENDPOINT + '/discover/search/objects?scope=ba3ddc3f-7a58-4fd3-bde5-304938050ea2&size=100'
 
 while items_url is not None:
     print(items_url)
@@ -51,12 +62,15 @@ while items_url is not None:
             print(f'Title: {title}')
             print(f'Link:  {link}')
             process_item(item)
-            break
+            # break
             # time.sleep(1)
 
-        if 'next' in response['_links']:
-            items_url = response['_links']['next']['href']
+        if 'next' in result['_links']:
+            items_url = result['_links']['next']['href']
         else:
             items_url = None
 
-    break
+    # break
+
+for year in sorted(stats.keys()):
+    print(f'{year}, {stats[year]}')
