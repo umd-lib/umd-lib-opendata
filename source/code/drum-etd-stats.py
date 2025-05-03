@@ -25,17 +25,17 @@ stats = {}
 
 
 def process_item(item):
-    bundles_url = item['_links']['bundles']['href']
-    print(bundles_url)
-    with urllib.request.urlopen(bundles_url) as request:
+    # bundles_url = item['_links']['bundles']['href']
+    # print(bundles_url)
+    # with urllib.request.urlopen(bundles_url) as request:
         # bundles = json.loads(request.read())
         # for bundle in bundles['_embedded']['bundles']:
         #     process_bundle(bundle)
 
-        year_accessioned = item['metadata']['dc.date.accessioned'][0]['value'][0:4]
-        if year_accessioned not in stats:
-            stats[year_accessioned] = 0
-        stats[year_accessioned] += 1
+    year_accessioned = item['metadata']['dc.date.accessioned'][0]['value'][0:4]
+    if year_accessioned not in stats:
+        stats[year_accessioned] = 0
+    stats[year_accessioned] += 1
 
 items_url = ENDPOINT + '/discover/search/objects?scope=ba3ddc3f-7a58-4fd3-bde5-304938050ea2&size=100'
 
@@ -61,9 +61,22 @@ while items_url is not None:
             print('----')
             print(f'Title: {title}')
             print(f'Link:  {link}')
-            process_item(item)
-            # break
-            # time.sleep(1)
+
+            for backoff in [0,2,3,5,8,13,21,34,55,89,144,233,377,610,987]:
+                time.sleep(backoff)
+                try:
+                    process_item(item)
+                    break
+                except urllib.error.HTTPError as e:
+                    print(f'HTTPError: {e}')
+                    # if e.code == 429:
+                    #     print('Rate limit exceeded, sleeping...')
+                    #     time.sleep(60)
+                    # else:
+                    #     raise
+                except Exception as e:
+                    print(f'Error: {e}')
+                    # raise
 
         if 'next' in result['_links']:
             items_url = result['_links']['next']['href']
