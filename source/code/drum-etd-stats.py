@@ -40,7 +40,7 @@ def process_item(item):
 items_url = ENDPOINT + '/discover/search/objects?scope=ba3ddc3f-7a58-4fd3-bde5-304938050ea2&size=100'
 
 while items_url is not None:
-    for backoff in [0,2,3,5,8,13,21,34,55,89,144,233,377,610,987]:
+    for backoff in [2,3,5,8,13,21,34,55,89,144,233,377,610,987]:
         time.sleep(backoff)
         try:
             print(items_url)
@@ -61,9 +61,9 @@ while items_url is not None:
                     else:
                         title = "n/a"
 
-                    print('----')
-                    print(f'Title: {title}')
-                    print(f'Link:  {link}')
+                    # print('----')
+                    # print(f'Title: {title}')
+                    # print(f'Link:  {link}')
 
                     process_item(item)
 
@@ -79,6 +79,10 @@ while items_url is not None:
             #     time.sleep(60)
             # else:
             #     raise
+
+        else:
+            # Exit the backupoff loop if we succeed
+            break
 
 for year in sorted(stats.keys()):
     print(f'{year}, {stats[year]}')
