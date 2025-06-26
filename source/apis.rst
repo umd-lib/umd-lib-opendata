@@ -43,3 +43,22 @@ OpenAPI Specification
 =====================
 
 The `OpenAPI Specification <https://spec.openapis.org/oas/latest.html>`_ (OAS) defines a standard, programming language-agnostic interface description for HTTP APIs, which allows both humans and computers to discover and understand the capabilities of a service without requiring access to source code, additional documentation, or inspection of network traffic. When properly defined via OpenAPI, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interface descriptions have done for lower-level programming, the OpenAPI Specification removes guesswork in calling a service.
+
+.. _APIs SRU:
+
+Search/Retrieve via URL (SRU)
+=============================
+
+From the `Search/Retrieve via URL <https://en.wikipedia.org/wiki/Search/Retrieve_via_URL>`_
+Wikipedia entry:
+
+    Search/Retrieve via URL (SRU) is a standard search protocol for Internet
+    search queries, utilizing Contextual Query Language (CQL), a standard query
+    syntax for representing queries.
+
+From the `Library of Congress SRU <https://www.loc.gov/standards/sru/>`_ home page:
+
+    Search/Retrieve via URL (SRU) is a standard for searching and retrieving
+    information from remote information services. It is based on the Z39.50
+    protocol, but uses HTTP as the transport mechanism and XML as the encoding
+    format.
