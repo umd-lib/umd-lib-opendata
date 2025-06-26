@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>University of Maryland Libraries Open Data – University of Maryland Libraries Open Data</title>
+    <link>http://localhost:61113/</link>
+    <description>Recent content on University of Maryland Libraries Open Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 13 May 2025 13:49:12 -0400</lastBuildDate>
+    
+	  <atom:link href="http://localhost:61113/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+      
+    
+    
+  </channel>
+</rss>
