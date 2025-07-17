@@ -1,4 +1,4 @@
-FROM sphinxdoc/sphinx:4.5.0 as makehtml
+FROM sphinxdoc/sphinx:4.5.0 AS makehtml
 
 WORKDIR /docs
 COPY source source
