@@ -1,6 +1,7 @@
 # umd-lib-opendata
 
-University of Maryland Libraries Open Data Website, built using the [Sphinx](https://www.sphinx-doc.org/en/master/) documentation builder.
+University of Maryland Libraries Open Data Website, built using the
+[Sphinx](https://www.sphinx-doc.org/en/master/) documentation builder.
 
 ## Building
 
@@ -22,7 +23,8 @@ open 'http://localhost:8080'
 
 ## Python Environment
 
-Setup a Python environment to assist in building the static website or running the [code examples](source/code), using pyenv and venv.
+Setup a Python environment to assist in building the static website or running
+the [code examples](source/code), using pyenv and venv.
 
 ```bash
 # Setup the Python version
@@ -36,4 +38,4 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-For more info see https://www.sphinx-doc.org/en/master/usage/index.html
+For more info see <https://www.sphinx-doc.org/en/master/usage/index.html>
