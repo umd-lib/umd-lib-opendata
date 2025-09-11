@@ -130,7 +130,10 @@ def harvest_item(item):
 def harvest_items():
     ''' Browse over all items, harvest each one '''
 
-    items_url = ENDPOINT + '/discover/browses/title/items'
+    if args.collection_id:
+        items_url = ENDPOINT + f'/discover/search/objects?configuration=collection&scope={args.collection_id}'
+    else:
+        items_url = ENDPOINT + '/discover/browses/title/items'
 
     # Iterate over paged results
     while True:
@@ -143,9 +146,16 @@ def harvest_items():
 
         response = json.loads(response.text)
 
+        if args.collection_id:
+            response = response['_embedded']['searchResult']
+
         # Iterate over the returned items
-        for item in response['_embedded']['items']:
-            harvest_item(item)
+        if args.collection_id:
+            for object in response['_embedded']['objects']:
+                harvest_item(object['_embedded']['indexableObject'])
+        else:
+            for item in response['_embedded']['items']:
+                harvest_item(item)
 
         if 'next' in response['_links']:
             items_url = response['_links']['next']['href']
@@ -181,6 +191,11 @@ if __name__ == "__main__":
                         default=Path('harvest'),
                         help='Directory to store harvested items (default: harvest)')
 
+    parser.add_argument('--collection-id',
+                        type=str,
+                        default=None,
+                        help='Limit harvesting to items in a collection (default: all items)')
+
     global args
     args = parser.parse_args()
 
@@ -195,6 +210,8 @@ if __name__ == "__main__":
     elif not args.directory.is_dir():
         parser.error(f'Invalid --directory option: {args.directory} is not a directory')
 
-    print(args)
+    print("Harvest configuration:")
+    for arg, value in vars(args).items():
+        print(f"  {arg}: {value}")
 
     harvest_items()
