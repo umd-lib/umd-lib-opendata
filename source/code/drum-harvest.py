@@ -212,7 +212,7 @@ harvested from an item which was interrupted in progress.
     parser.add_argument('--collection-id',
                         type=str,
                         default=None,
-                        help='Limit harvesting to items in a collection (default: all items)')
+                        help='Limit harvesting to items in a collection (default: None)')
 
     global args
     args = parser.parse_args()
