@@ -168,7 +168,25 @@ def harvest_items():
             time.sleep(args.delay)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Harvest items from DRUM')
+
+    parser = argparse.ArgumentParser(description='Harvest items from DRUM',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     epilog='''
+Example file structure for two items in the <harvest> directory:
+
+harvest
+├── 065fa8e1-e9ad-4c4a-ab8e-0f4e34733f47 # Item ID
+│   ├── 065fa8e1-e9ad-4c4a-ab8e-0f4e34733f47.json # Item metadata
+│   └── Puchtel et al. (2018 Geochimical et Cosmochimica Acta).pdf # Downloaded file for the item
+├── 2c7918c8-17c7-449d-ba02-28b92c252cac
+│   ├── 24SS_URSP673_15MinuteNeighborhoods_FinalPresentation_POST.pdf
+│   ├── 24SS_URSP673_15MinuteNeighborhoods_FinalReport_POST.pdf
+│   └── 2c7918c8-17c7-449d-ba02-28b92c252cac.json
+
+If this script is restarted, it will skip any items already downloaded, but
+first you must remove the {directory}/temp directory, which may contain files
+harvested from an item which was interrupted in progress.
+''')
 
     harvest_options = ['item-metadata', 'files']
     parser.add_argument('--harvest',
