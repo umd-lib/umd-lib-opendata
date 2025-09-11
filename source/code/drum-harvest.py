@@ -6,11 +6,13 @@
 # already downloaded, but first you must remove the
 # files/temp directory.
 
-import logging
-from http.client import HTTPConnection
-import sys
+# import logging
+# from http.client import HTTPConnection
+# import sys
 import json
 from pathlib import Path
+import argparse
+import time
 
 import requests
 
@@ -109,11 +111,14 @@ def harvest_item(item):
     temp_dir.mkdir(parents=True)
 
     # Write the item file
-    with (temp_dir / Path(f'{uuid}.json')).open(mode='w', encoding='utf-8') as f:
-        json.dump(item, f)
+    if 'item-metadata' in args.harvest:
+        with (temp_dir / Path(f'{uuid}.json')).open(mode='w', encoding='utf-8') as f:
+            json.dump(item, f)
+            f.write('\n')
 
     # Harvest this item's bundles
-    harvest_bundles(item, temp_dir)
+    if 'files' in args.harvest:
+        harvest_bundles(item, temp_dir)
 
     # Rename the temp directory to the item directory
     # This indicates the downloads for this item are complete
@@ -128,7 +133,7 @@ def harvest_items():
     # Iterate over paged results
     while True:
 
-        response = requests.get(items_url)
+        response = requests.get(items_url, params={'size': 100})
 
         if not response.ok:
             print(f'Error reading response: {response}')
@@ -143,8 +148,35 @@ def harvest_items():
         if 'next' in response['_links']:
             items_url = response['_links']['next']['href']
         else:
+            print("Harvest complete")
             break
 
+        # Delay between requests
+        if args.delay > 0:
+            time.sleep(args.delay)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Harvest items from DRUM')
+
+    harvest_options = ['item-metadata', 'files']
+    parser.add_argument('--harvest',
+                        type=lambda s: [item.strip() for item in s.split(',')],
+                        default=', '.join(harvest_options),
+                        help=f'Comma-separated list of data to harvest: (default: {", ".join(harvest_options)})')
+
+    parser.add_argument('--delay',
+                        type=float,
+                        default=2.0,
+                        help='Delay in seconds between requests (default: 2.0)')
+
+    global args
+    args = parser.parse_args()
+
+    # Validate harvest options
+    for option in args.harvest:
+        if option not in harvest_options:
+            parser.error(f'Invalid --harvest option: {option if option else "<empty>"}')
+
+    print(args)
+
     harvest_items()
