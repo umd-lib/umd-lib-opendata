@@ -131,9 +131,9 @@ def harvest_items():
     ''' Browse over all items, harvest each one '''
 
     if args.collection_id:
-        items_url = ENDPOINT + f'/discover/search/objects?configuration=collection&scope={args.collection_id}'
+        items_url = args.endpoint + f'/discover/search/objects?configuration=collection&scope={args.collection_id}'
     else:
-        items_url = ENDPOINT + '/discover/browses/title/items'
+        items_url = args.endpoint + '/discover/browses/title/items'
 
     # Iterate over paged results
     while True:
@@ -213,6 +213,12 @@ harvested from an item which was interrupted in progress.
                         type=str,
                         default=None,
                         help='Limit harvesting to items in a collection (default: None)')
+
+    parser.add_argument('--endpoint',
+                        type=str,
+                        default=ENDPOINT,
+                        help=f'DSpace API endpoint base url (default: {ENDPOINT})'
+                        )
 
     global args
     args = parser.parse_args()
