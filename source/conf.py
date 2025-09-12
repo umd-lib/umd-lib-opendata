@@ -22,7 +22,7 @@ copyright = '2025, University of Maryland Libraries'
 author = 'University of Maryland Libraries'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.18'
+release = '1.0.20'
 
 
 # -- General configuration ---------------------------------------------------
