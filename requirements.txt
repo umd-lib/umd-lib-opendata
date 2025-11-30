@@ -1,4 +1,4 @@
-alabaster==0.7.16
+alabaster==1.0.0
 attrs==24.2.0
 Babel==2.15.0
 cattrs==23.2.3
@@ -23,14 +23,15 @@ pyoai==2.5.0
 pyspellchecker==0.8.1
 PyYAML==6.0.1
 requests==2.32.3
+roman-numerals==3.1.0
 setuptools==70.2.0
 six==1.16.0
 snowballstemmer==2.2.0
-Sphinx==7.3.7
+Sphinx==9.0.0
 sphinx-sitemap==2.6.0
 sphinxcontrib-applehelp==1.0.8
 sphinxcontrib-devhelp==1.0.6
-sphinxcontrib-htmlhelp==2.0.5
+sphinxcontrib-htmlhelp==2.1.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.7
 sphinxcontrib-serializinghtml==1.1.10
