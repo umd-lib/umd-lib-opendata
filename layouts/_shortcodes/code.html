@@ -1,0 +1,4 @@
+{{- $filename := .Get 0 -}}
+{{- $language := .Get 1 -}}
+{{- $fileContents := readFile $filename -}}
+{{- highlight $fileContents $language -}}
