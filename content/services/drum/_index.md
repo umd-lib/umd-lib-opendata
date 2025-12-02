@@ -24,7 +24,7 @@ curl "https://api.drum.lib.umd.edu/server/oai/request?verb=ListMetadataFormats"
 
 Additional Examples:
 
-[drum-oaipmh.py](/code/drum-oaipmh.py) Use OAI-PMH to harvest metadata in DRUM.
+* [drum-oaipmh.py](/code/drum-oaipmh.py) Use OAI-PMH to harvest metadata in DRUM.
 
 ## OpenSearch
 
@@ -34,16 +34,17 @@ Example: [drum-search.py](/code/drum-search.py)
 
 {{< code filename="static/code/drum-search.py" language="python" >}}
 
-DSpace REST API
------------------
+## DSpace REST API
 
-Endpoint: `<https://api.drum.lib.umd.edu/server/api>`_
+Endpoint: <https://api.drum.lib.umd.edu/server/api>
 
-The endpoint is explorable using the `HAL <http://stateless.co/hal_specification.html>`_
-Browser at `<https://api.drum.lib.umd.edu/server>`_.
+The endpoint is explorable using the [HAL](http://stateless.co/hal_specification.html)
+Browser at <https://api.drum.lib.umd.edu/server>.
 
-.. literalinclude:: code/drum-api.py
+Example:
+{{< code filename="static/code/drum-api.py" language="python" >}}
 
 Additional Example:
 
-* :download:`drum-harvest.py <code/drum-harvest.py>` Harvest metadata and files for every item in DRUM.
+* [drum-harvest.py](/code/drum-harvest.py) Harvest metadata and files for every
+  item in DRUM.
