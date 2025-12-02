@@ -32,7 +32,7 @@ Endpoint: <https://api.drum.lib.umd.edu/server/opensearch/search>
 
 Example: [drum-search.py](/code/drum-search.py)
 
-{{< code "static/code/drum-search.py" "python" >}}
+{{< code filename="static/code/drum-search.py" language="python" >}}
 
 DSpace REST API
 -----------------
