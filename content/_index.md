@@ -30,6 +30,7 @@ modules](https://github.com/umd-lib/umd-lib-opendata#python-environment).
 
 ## Explore
 
-{{< cards >}} {{< card link="services" title="Services" icon="book-open" >}}
+{{< cards >}}
+  {{< card link="services" title="Services" icon="book-open" >}}
   {{< card link="contact" title="Contact Us" icon="user" >}}
 {{< /cards >}}
