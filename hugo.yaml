@@ -1,5 +1,5 @@
 # Hugo configuration file
-title: University of Maryland Libraries Open Data
+title: Open Data
 
 # import hextra as module
 module:
@@ -43,8 +43,11 @@ menu:
 params:
   navbar:
     displayTitle: true
-    displayLogo: false
-
+    displayLogo: true
+    logo:
+      path: images/liblogo.svg
+      width: 200
+      height: 60
   footer:
     displayCopyright: false
     displayPoweredBy: true
@@ -52,3 +55,4 @@ params:
   editURL:
     enable: true
     base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo/content"
+
