@@ -51,4 +51,4 @@ params:
 
   editURL:
     enable: true
-    base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo2/content"
+    base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo/content"
