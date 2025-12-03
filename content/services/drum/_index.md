@@ -3,7 +3,7 @@ title: DRUM
 ---
 
 The [Digital Repository at the University of Maryland
-(DRUM)](https://drum.lib.umd.edu>) collects, preserves, and provides public
+(DRUM)](https://drum.lib.umd.edu) collects, preserves, and provides public
 access to the scholarly output of the university. Faculty and researchers can
 upload research products for rapid dissemination, global visibility and impact,
 and long-term preservation.
