@@ -1,6 +1,5 @@
 ---
 title: Services
-next: /services/drum
 ---
 
 List of services, with their technologies, endpoints, and examples.
@@ -10,4 +9,5 @@ List of services, with their technologies, endpoints, and examples.
 {{< cards >}}
   {{< card link="drum" title="DRUM" icon="book-open" >}}
   {{< card link="digital-collections" title="Digital Collections" icon="book-open" >}}
+  {{< card link="digital-collections-av" title="Digital Collections Audio/Video" icon="book-open" >}}
 {{< /cards >}}
