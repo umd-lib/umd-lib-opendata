@@ -6,6 +6,8 @@ title: Digital Collections Audio/Video
 
 ## OpenSearch
 
+API Description: [OpenSearch](/apis#opensearch)
+
 OpenSearch Description: <https://av.lib.umd.edu/catalog/opensearch.xml>
 
 JSON Endpoint: <https://av.lib.umd.edu/catalog.json>
@@ -25,6 +27,8 @@ Example: [digital-collections-av-search.py](/code/digital-collections-av-search.
 {{< code filename="static/code/digital-collections-av-search.py" name="digital-collections-av-search.py" language="python" >}}
 
 ## OAI-PMH
+
+API Description: [OAI-PMH](/apis#oai-pmh)
 
 Endpoint: <https://api.av.lib.umd.edu/oai/api>
 

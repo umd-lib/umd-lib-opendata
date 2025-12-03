@@ -10,6 +10,8 @@ and long-term preservation.
 
 ## OAI-PMH
 
+API Description: [OAI-PMH](/apis#oai-pmh)
+
 Endpoint: <https://api.drum.lib.umd.edu/server/oai/request>
 
 Example:
@@ -28,6 +30,8 @@ Additional Examples:
 
 ## OpenSearch
 
+API Description: [OpenSearch](/apis#opensearch)
+
 Endpoint: <https://api.drum.lib.umd.edu/server/opensearch/search>
 
 Example: [drum-search.py](/code/drum-search.py)
@@ -35,6 +39,8 @@ Example: [drum-search.py](/code/drum-search.py)
 {{< code filename="static/code/drum-search.py" name="drum-search.py" language="python" >}}
 
 ## DSpace REST API
+
+API Description: [DSpace REST API](/apis#dspace-rest-api)
 
 Endpoint: <https://api.drum.lib.umd.edu/server/api>
 

@@ -12,7 +12,7 @@ website](https://www.lib.umd.edu/research/oss/publishing-and-digital-projects/re
 
 ## OpenAPI Specification
 
-The Dryad API is built using the [OpenAPI Specification](/apis#openapi), with
+The Dryad API is built using the [OpenAPI Specification](/apis#open-api), with
 both [YAML-based](https://datadryad.org/openapi.yml) and
 [HTML-based](https://datadryad.org/api/v2/docs/) documentation available.
 

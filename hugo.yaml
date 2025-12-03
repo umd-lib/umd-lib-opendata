@@ -24,6 +24,9 @@ menu:
     - name: Services
       pageRef: /services
       weight: 2
+    - name: APIs
+      pageRef: /apis
+      weight: 3
     - name: Contact Us
       pageRef: /contact
       weight: 7

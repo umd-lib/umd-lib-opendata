@@ -9,6 +9,8 @@ library catalogs. The site is solely a search tool and does not host any data.
 
 ## OpenSearch
 
+API Description: [OpenSearch](/apis#opensearch)
+
 OpenSearch Description: <https://geo.btaa.org/catalog/opensearch.xml>
 
 RSS+XML Endpoint: <https://geo.btaa.org/?format=rss>
