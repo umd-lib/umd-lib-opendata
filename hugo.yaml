@@ -18,9 +18,6 @@ markup:
 
 menu:
   main:
-    - name: Docs
-      pageRef: /docs
-      weight: 1
     - name: Services
       pageRef: /services
       weight: 2
@@ -33,9 +30,6 @@ menu:
     - name: Contact Us
       pageRef: /contact
       weight: 7
-    - name: About
-      pageRef: /about
-      weight: 8
     - name: Search
       weight: 9
       params:
