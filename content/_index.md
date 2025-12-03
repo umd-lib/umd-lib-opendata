@@ -21,17 +21,11 @@ Library](https://docs.python.org/3/library/). Downloadable Python code examples
 may require [installation of external
 modules](https://github.com/umd-lib/umd-lib-opendata#python-environment).
 
-<!-- .. toctree::
-
-   services
-   apis
-   datasets
-   contact -->
-
 ## Explore
 
 {{< cards >}}
   {{< card link="services" title="Services" icon="book-open" >}}
   {{< card link="apis" title="APIs" icon="book-open" >}}
+  {{< card link="datasets" title="DataSets" icon="book-open" >}}
   {{< card link="contact" title="Contact Us" icon="user" >}}
 {{< /cards >}}
