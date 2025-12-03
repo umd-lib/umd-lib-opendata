@@ -22,7 +22,7 @@ curl "https://av.lib.umd.edu/catalog.rss?$PARAMS"
 
 Example: [digital-collections-av-search.py](/code/digital-collections-av-search.py)
 
-{{< code filename="static/code/digital-collections-av-search.py" language="python" >}}
+{{< code filename="static/code/digital-collections-av-search.py" name="digital-collections-av-search.py" language="python" >}}
 
 ## OAI-PMH
 

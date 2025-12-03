@@ -32,7 +32,7 @@ Endpoint: <https://api.drum.lib.umd.edu/server/opensearch/search>
 
 Example: [drum-search.py](/code/drum-search.py)
 
-{{< code filename="static/code/drum-search.py" language="python" >}}
+{{< code filename="static/code/drum-search.py" name="drum-search.py" language="python" >}}
 
 ## DSpace REST API
 
@@ -42,7 +42,7 @@ The endpoint is explorable using the [HAL](http://stateless.co/hal_specification
 Browser at <https://api.drum.lib.umd.edu/server>.
 
 Example:
-{{< code filename="static/code/drum-api.py" language="python" >}}
+{{< code filename="static/code/drum-api.py" name="drum-api.py" language="python" >}}
 
 Additional Example:
 
