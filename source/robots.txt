@@ -1,4 +1,0 @@
-Sitemap: https://opendata.lib.umd.edu/sitemap.xml
-
-User-agent: *
-Allow: /
