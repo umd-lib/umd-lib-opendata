@@ -48,9 +48,10 @@ params:
       path: images/liblogo.svg
       width: 200
       height: 60
+
   footer:
     displayCopyright: false
-    displayPoweredBy: true
+    displayPoweredBy: false
 
   editURL:
     enable: true
