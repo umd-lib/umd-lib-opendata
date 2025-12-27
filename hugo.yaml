@@ -46,6 +46,7 @@ params:
     displayLogo: true
     logo:
       path: images/liblogo.svg
+      dark: images/liblogo-dark.png
       width: 200
       height: 60
 
