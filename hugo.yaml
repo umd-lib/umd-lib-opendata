@@ -42,6 +42,11 @@ menu:
       url: "https://github.com/umd-lib/umd-lib-opendata"
       params:
         icon: github
+    - name: Atom Feed
+      weight: 11
+      url: "/index.xml"
+      params:
+        icon: rss
 
 params:
   navbar:
