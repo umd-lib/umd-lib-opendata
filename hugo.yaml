@@ -30,6 +30,9 @@ menu:
     - name: Contact Us
       pageRef: /contact
       weight: 7
+    - name: Blog
+      pageRef: /posts
+      weight: 8
     - name: Search
       weight: 9
       params:
