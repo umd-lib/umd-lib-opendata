@@ -44,7 +44,7 @@ menu:
         icon: github
     - name: Atom Feed
       weight: 11
-      url: "/index.xml"
+      pageRef: "/index.xml"
       params:
         icon: rss
 
@@ -66,3 +66,6 @@ params:
     enable: true
     base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo/content"
 
+permalinks:
+  page:
+    posts: /posts/:year/:month/:slug/
