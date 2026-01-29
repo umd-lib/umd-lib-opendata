@@ -1,7 +1,14 @@
+{{- $filename := .Params.name | default "" -}}
+
 <div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
     <div class="hextra-code-filename not-prose" dir="auto">{{- .Params.name -}}</div>
     <div>
         {{- $fileContents := readFile .Params.filename -}}
         {{- highlight $fileContents .Params.language -}}
     </div>
+
+    {{- if or (eq site.Params.highlight.copy.enable nil) (site.Params.highlight.copy.enable) -}}
+        {{- partialCached "components/codeblock-copy-button" (dict "filename" $filename) $filename -}}
+    {{- end -}}
+
 </div>
