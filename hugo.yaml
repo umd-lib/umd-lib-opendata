@@ -1,0 +1,71 @@
+# Hugo configuration file
+title: Open Data
+
+# import hextra as module
+module:
+  imports:
+    - path: github.com/imfing/hextra
+
+markup:
+  # allow raw html
+  goldmark:
+    renderer:
+      unsafe: true
+
+  # enable hextra syntax highlight
+  highlight:
+    noClasses: false
+
+menu:
+  main:
+    - name: Services
+      pageRef: /services
+      weight: 2
+    - name: APIs
+      pageRef: /apis
+      weight: 3
+    - name: Datasets
+      pageRef: /datasets
+      weight: 4
+    - name: Contact Us
+      pageRef: /contact
+      weight: 7
+    - name: Blog
+      pageRef: /posts
+      weight: 8
+    - name: Search
+      weight: 9
+      params:
+        type: search
+    - name: GitHub
+      weight: 10
+      url: "https://github.com/umd-lib/umd-lib-opendata"
+      params:
+        icon: github
+    - name: Atom Feed
+      weight: 11
+      pageRef: "/index.xml"
+      params:
+        icon: rss
+
+params:
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: images/liblogo.svg
+      dark: images/liblogo-dark.png
+      width: 200
+      height: 60
+
+  footer:
+    displayCopyright: false
+    displayPoweredBy: false
+
+  editURL:
+    enable: true
+    base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo/content"
+
+permalinks:
+  page:
+    posts: /posts/:year/:month/:slug/
