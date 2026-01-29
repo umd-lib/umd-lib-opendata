@@ -51,6 +51,3 @@ collaboration and data sharing.
 We invite you to explore the new website, discover the resources available, and
 share your feedback as we continue to evolve this platform to meet the needs of
 our users and partners.
-
-Visit us at [opendata.lib.umd.edu](https://opendata.lib.umd.edu) and join us in
-supporting open and connected research at the University of Maryland.
