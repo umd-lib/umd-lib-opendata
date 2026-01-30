@@ -15,7 +15,7 @@ tasks:
     serve:
         desc: "Serve the site locally with drafts"
         cmds:
-            - hugo server --logLevel debug --disableFastRender --port 1314 --buildDrafts
+            - hugo server --logLevel debug --disableFastRender --port 1314 --buildDrafts --buildFuture
 
     clean:
         desc: "Clean build artifacts"
