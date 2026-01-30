@@ -64,7 +64,7 @@ params:
 
   editURL:
     enable: true
-    base: "https://github.com/umd-lib/umd-lib-opendata/edit/wallberg/hugo/content"
+    base: "https://github.com/umd-lib/umd-lib-opendata/blob/feat/hugo/content"
 
 permalinks:
   page:
