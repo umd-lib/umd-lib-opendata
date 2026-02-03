@@ -1,17 +1,6 @@
 FROM golang:1-trixie AS makehtml
 
-# Add Hugo build options, e.g. --buildDrafts --buildFuture
-ARG HUGO_BUILDOPTS
-
 RUN apt update
-# RUN apt install -y golang
-# RUN apt install -y ssh
-
-# Configuration variables
-# ENV GIT_REPO_CONTENT_PATH=''
-# ENV GIT_REPO_BRANCH='main'
-# ENV TARGET_DIR='/target'
-# ENV GIT_SSH_ID_FILE='/ssh/id_rsa'
 
 # Install go packages
 RUN go install github.com/go-task/task/v3/cmd/task@latest
@@ -37,6 +26,9 @@ COPY Taskfile.yaml /build/Taskfile.yaml
 
 ARG HUGO_BASEURL=https://opendata.lib.umd.edu/
 ENV HUGO_BASEURL=$HUGO_BASEURL
+
+# Add Hugo build options, e.g. --buildDrafts --buildFuture
+ARG HUGO_BUILDOPTS
 
 RUN hugo build --minify --destination /build/html ${HUGO_BUILDOPTS}
 
