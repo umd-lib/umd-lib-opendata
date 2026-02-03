@@ -1,0 +1,24 @@
+version: '3'
+
+tasks:
+    default:
+        desc: "Default task"
+        cmds:
+            - task: build
+
+    build:
+        desc: "Build the project"
+        cmds:
+            - echo "Building..."
+            - hugo build
+
+    serve:
+        desc: "Serve the site locally with drafts"
+        cmds:
+            - hugo server --logLevel debug --disableFastRender --port 1314 --buildDrafts --buildFuture
+
+    clean:
+        desc: "Clean build artifacts"
+        cmds:
+            - echo "Cleaning..."
+            - rm -rf public/
