@@ -5,9 +5,9 @@ title: 'Announcing Archive-It'
 type: blog
 ---
 
-We have adde the new [Archive-It Service](/services/archive-it). is the leading
-web archiving service for collecting and accessing cultural heritage on the
-web. UMD routinely archives a variety of web content to enhance our unique
+We have added a new [Archive-It Service](/services/archive-it), which is the
+leading web archiving service for collecting and accessing cultural heritage on
+the web. UMD routinely archives a variety of web content to enhance our unique
 collections.
 
 As of this posting the [University of Maryland
