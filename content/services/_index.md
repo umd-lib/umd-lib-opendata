@@ -5,6 +5,7 @@ title: Services
 List of services, with their technologies, endpoints, and examples.
 
 {{< cards >}}
+  {{< card link="archival-collections" title="Archival Collections" icon="book-open" >}}
   {{< card link="archive-it" title="Archive-It" icon="book-open" >}}
   {{< card link="btaa-geoportal" title="BTAA Geoportal" icon="book-open" >}}
   {{< card link="digital-collections" title="Digital Collections" icon="book-open" >}}
