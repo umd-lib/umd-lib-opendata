@@ -1,6 +1,5 @@
 ---
 publishDate: '2026-02-11T00:00:01-05:00'
-draft: true
 title: 'Announcing Archive-It'
 type: blog
 ---

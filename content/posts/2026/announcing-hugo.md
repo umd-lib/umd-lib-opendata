@@ -1,6 +1,5 @@
 ---
 publishDate: '2026-02-11T00:00:00-05:00'
-draft: true
 title: 'Announcing website migration to Hugo'
 type: blog
 ---
