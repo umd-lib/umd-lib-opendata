@@ -6,7 +6,7 @@ UMD is a member of the [Dryad Data Community](https://datadryad.org/), which is
 a community-owned resource that offers data curation services in addition to
 large storage capacity for most kinds of datasets in any discipline. A search
 is available with a limit to the [University of Maryland, College Park
-Institution](https://datadryad.org/search?f%5Bdryad_author_affiliation_name_sm%5D%5B%5D=University+of+Maryland%2C+College+Park).
+Institution](https://datadryad.org/search?org=https%3A%2F%2Fror.org%2F047s2c258).
 You can find more information on the [UMD Libraries
 website](https://www.lib.umd.edu/research/oss/publishing-and-digital-projects/repository-services/open-data-repositories).
 
