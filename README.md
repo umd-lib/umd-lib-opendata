@@ -1,30 +1,33 @@
 # umd-lib-opendata
 
 University of Maryland Libraries Open Data Website, built using the
-[Sphinx](https://www.sphinx-doc.org/en/master/) documentation builder.
+[Hugo](https://gohugo.io/) static site generator.
 
 ## Building
 
-You can build the static website yourself:
+Install go-task.
 
-``` bash
-pip install -U sphinx sphinx-sitemap
-make html
-open build/html/index.html
+```bash
+# Intall using Homebrew
+brew install task
+
+# Install using golang
+go install github.com/go-task/task/v3/cmd/task@latest
 ```
 
-or you can let Docker do the work for you:
+Build and serve the website using hugo:
 
 ``` bash
-docker build -t opendata .
-docker run -it --rm -p 8080:80 opendata
-open 'http://localhost:8080'
+task serve
+open http://localhost:1314/
 ```
+
+For more information see [Hugo CLI docs](https://gohugo.io/commands/).
 
 ## Python Environment
 
-Setup a Python environment to assist in building the static website or running
-the [code examples](source/code), using pyenv and venv.
+Set up a Python environment to run the [code examples](static/code), using pyenv
+and venv.
 
 ```bash
 # Setup the Python version
@@ -37,5 +40,3 @@ source .venv/bin/activate
 # Install the requirements
 pip install -r requirements.txt
 ```
-
-For more info see <https://www.sphinx-doc.org/en/master/usage/index.html>
