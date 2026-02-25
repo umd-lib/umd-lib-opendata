@@ -20,4 +20,19 @@ Endpoint: <https://datadryad.org/api/v2/>
 
 Example: [dryad-api.py](/code/dryad-api.py)
 
-{{< code filename="/static/code/dryad-api.py" name="dryad-api.py" language="python">}}
+{{< code filename="/static/code/dryad-api.py" name="dryad-api.py"
+language="python">}}
+
+## JSON-LD
+
+Format Description: [JSON-LD](/apis#json-ld)
+
+You can extract [schema.org](https://schema.org/)
+[DataSet](https://schema.org/Dataset) structured data, encoded using
+[JSON-LD](/apis#json-ld), from HTML pages in Dryad for University of Maryland,
+College Park authors.
+
+Example:
+
+* [dryad-jsonld.py](/code/dryad-jsonld.py) Harvest metadata and files for every
+  item in DRUM.

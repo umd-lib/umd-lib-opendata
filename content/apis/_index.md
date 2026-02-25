@@ -2,8 +2,8 @@
 title: APIs
 ---
 
-Introduction to various Application Programming Interfaces (API) available
-for dynamic query of our services.
+Introduction to various Application Programming Interfaces (API) (and metadata
+formats) available for dynamic query of our services.
 
 ## OAI-PMH
 
@@ -63,3 +63,21 @@ From the [Library of Congress SRU](https://www.loc.gov/standards/sru/) home page
 > information from remote information services. It is based on the Z39.50
 > protocol, but uses HTTP as the transport mechanism and XML as the encoding
 > format.
+
+## JSON-LD {#json-ld}
+
+From the [JSON-LD](https://en.wikipedia.org/wiki/JSON-LD) Wikipedia entry:
+
+> JSON-LD (JavaScript Object Notation for Linked Data) is a method of encoding
+> linked data using JSON and of serializing data similarly to traditional JSON.
+> It is meant to be simple to create by modifying JSON documents. JSON-LD is a
+> World Wide Web Consortium Recommendation initially developed by the JSON for
+> Linking Data Community Group, transferred to the RDF Working Group for review,
+> improvement and standardization, and now maintained by the JSON-LD Working
+> Group.
+
+JSON-LD can be served as a standalone JSON-LD document or embedded in HTML,
+commonly as [schema.org](https://schema.org/) structured data.  See
+[Introduction to structured data markup in Google
+Search](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data?hl=en)
+for information on embedding JSON-LD as structured data.

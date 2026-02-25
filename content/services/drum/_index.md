@@ -26,7 +26,8 @@ curl "https://api.drum.lib.umd.edu/server/oai/request?verb=ListMetadataFormats"
 
 Additional Examples:
 
-* [drum-oaipmh.py](/code/drum-oaipmh.py) Use OAI-PMH to harvest metadata in DRUM.
+* [drum-oaipmh.py](/code/drum-oaipmh.py) Use OAI-PMH to harvest metadata in
+  DRUM.
 
 ## OpenSearch
 
@@ -36,7 +37,8 @@ Endpoint: <https://api.drum.lib.umd.edu/server/opensearch/search>
 
 Example: [drum-search.py](/code/drum-search.py)
 
-{{< code filename="static/code/drum-search.py" name="drum-search.py" language="python" >}}
+{{< code filename="static/code/drum-search.py" name="drum-search.py"
+language="python" >}}
 
 ## DSpace REST API
 
@@ -44,13 +46,28 @@ API Description: [DSpace REST API](/apis#dspace-rest-api)
 
 Endpoint: <https://api.drum.lib.umd.edu/server/api>
 
-The endpoint is explorable using the [HAL](http://stateless.co/hal_specification.html)
-Browser at <https://api.drum.lib.umd.edu/server>.
+The endpoint is explorable using the
+[HAL](http://stateless.co/hal_specification.html) Browser at
+<https://api.drum.lib.umd.edu/server>.
 
-Example:
-{{< code filename="static/code/drum-api.py" name="drum-api.py" language="python" >}}
+Example: {{< code filename="static/code/drum-api.py" name="drum-api.py"
+language="python" >}}
 
 Additional Example:
 
 * [drum-harvest.py](/code/drum-harvest.py) Harvest metadata and files for every
+  item in DRUM.
+
+## JSON-LD
+
+Format Description: [JSON-LD](/apis#json-ld)
+
+You can extract [schema.org](https://schema.org/)
+[DataSet](https://schema.org/Dataset) structured data, encoded using
+[JSON-LD](/apis#json-ld), from HTML pages in our [UMD Data
+Community](http://hdl.handle.net/1903/27669).
+
+Example:
+
+* [drum-jsonld.py](/code/drum-jsonld.py) Harvest metadata and files for every
   item in DRUM.
