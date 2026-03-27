@@ -33,7 +33,11 @@ specification](https://github.com/dewitt/opensearch).
 ## DSpace REST API
 
 DSpace REST API, first introduced in DSpace version 7. For more information see
-[DSpace 7 REST API](https://wiki.lyrasis.org/display/DSPACE/DSpace+7+REST+API).
+[REST Contract /
+Documentation](https://github.com/DSpace/RestContract/blob/main/README.md).
+This contract provides detailed information on how to interact with the API,
+what endpoints are available, etc. All features/capabilities of the DSpace UI
+are available in this API.
 
 ## OpenAPI Specification {#open-api}
 
