@@ -31,3 +31,8 @@ tasks:
         desc: "Builds and pushes the umd-lib-opendata image"
         cmds:
             - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata:{{.VERSION}} --build-arg HUGO_BUILDOPTS="{{.HUGO_BUILDOPTS}}" .
+
+    test-python:
+        desc: "Test all Python code examples in static/code/"
+        cmds:
+            - python test_python_examples.py
