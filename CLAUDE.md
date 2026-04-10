@@ -74,10 +74,11 @@ See `TEST_PYTHON_EXAMPLES.md` for detailed documentation.
 ### Python Dependencies
 
 The `requirements.txt` includes:
-- `pyoai==2.5.0` - OAI-PMH protocol client for metadata harvesting
-- `rdflib==7.6.0` - RDF and JSON-LD processing for semantic data
-- `requests==2.32.3` - HTTP client for API requests
-- `sru-queryer==2.1.3` - SRU (Search/Retrieve via URL) protocol client
+
+* `pyoai==2.5.0` - OAI-PMH protocol client for metadata harvesting
+* `rdflib==7.6.0` - RDF and JSON-LD processing for semantic data
+* `requests==2.32.3` - HTTP client for API requests
+* `sru-queryer==2.1.3` - SRU (Search/Retrieve via URL) protocol client
 
 ## Architecture
 
@@ -85,44 +86,46 @@ The `requirements.txt` includes:
 
 The Hugo site content is organized as follows:
 
-- **`content/services/`** - Documentation for each service (DRUM, Digital Collections, Archive-It, etc.)
-- **`content/apis/`** - API documentation and specifications (OAI-PMH, OpenSearch, DSpace REST API, JSON-LD, etc.)
-- **`content/datasets/`** - Dataset descriptions
-- **`content/posts/`** - Blog posts and updates
-- **`static/code/`** - Downloadable Python code examples demonstrating API usage
+* **`content/services/`** - Documentation for each service (DRUM, Digital Collections, Archive-It, etc.)
+* **`content/apis/`** - API documentation and specifications (OAI-PMH, OpenSearch, DSpace REST API, JSON-LD, etc.)
+* **`content/datasets/`** - Dataset descriptions
+* **`content/posts/`** - Blog posts and updates
+* **`static/code/`** - Downloadable Python code examples demonstrating API usage
 
 ### Hugo Configuration
 
-- **`hugo.yaml`** - Main Hugo configuration file
-- **`go.mod`** - Hugo modules configuration (imports Hextra theme v0.12.0)
-- **Theme**: Uses Hextra theme as a Hugo module, not a git submodule
+* **`hugo.yaml`** - Main Hugo configuration file
+* **`go.mod`** - Hugo modules configuration (imports Hextra theme v0.12.0)
+* **Theme**: Uses Hextra theme as a Hugo module, not a git submodule
 
 ### Custom Components
 
-- **`layouts/partials/`** - Custom partial templates overriding Hextra defaults
-  - `navbar-title.html` - Custom navbar with UMD Libraries logo
-  - `navbar.html` - Navigation bar customizations
-  - `search.html` - Search functionality customizations
+* **`layouts/partials/`** - Custom partial templates overriding Hextra defaults
+  * `navbar-title.html` - Custom navbar with UMD Libraries logo
+  * `navbar.html` - Navigation bar customizations
+  * `search.html` - Search functionality customizations
 
-- **`layouts/_shortcodes/code.html`** - Custom shortcode for embedding Python code files directly into content with syntax highlighting and copy button
+* **`layouts/_shortcodes/code.html`** - Custom shortcode for embedding Python code files directly into content with syntax highlighting and copy button
 
 ### Python Code Examples
 
 The `static/code/` directory contains working Python examples for:
-- OAI-PMH metadata harvesting (various services)
-- OpenSearch API queries
-- DSpace REST API usage
-- JSON-LD structured data extraction
-- Internet Archive searches
-- Geoportal searches
+
+* OAI-PMH metadata harvesting (various services)
+* OpenSearch API queries
+* DSpace REST API usage
+* JSON-LD structured data extraction
+* Internet Archive searches
+* Geoportal searches
 
 Key example: `static/code/drum-harvest.py` - A comprehensive script for harvesting items from DRUM with resumable downloads.
 
 ### Harvest Directory
 
 The `harvest/` directory contains harvested metadata and files from DRUM items. Each subdirectory is named by item UUID and contains:
-- `{uuid}.json` - Item metadata
-- Downloaded files/bitstreams for that item
+
+* `{uuid}.json` - Item metadata
+* Downloaded files/bitstreams for that item
 
 ## Docker Deployment
 
@@ -131,39 +134,70 @@ The `Dockerfile` uses a multi-stage build:
 2. **Runtime stage**: Uses nginx:1.20 to serve the static files
 
 Build arguments:
-- `HUGO_BASEURL` - Base URL for the site (default: https://opendata.lib.umd.edu/)
-- `HUGO_BUILDOPTS` - Additional Hugo build options (e.g., `--buildDrafts --buildFuture`)
+
+* `HUGO_BASEURL` - Base URL for the site (default: <https://opendata.lib.umd.edu/>)
+* `HUGO_BUILDOPTS` - Additional Hugo build options (e.g., `--buildDrafts --buildFuture`)
+
+## Documentation Standards
+
+### Markdown Formatting
+
+Follow markdownlint rules when creating or editing markdown files:
+
+* **MD004**: Use asterisk-style lists (`*`) instead of dash-style (`-`)
+  for unordered lists
+* **MD032**: Add blank lines before and after lists
+* **MD034**: Wrap bare URLs in angle brackets `<https://example.com>`
+
+Example:
+
+```markdown
+Here is a list:
+
+* First item
+* Second item
+  * Nested item
+* Third item
+
+Another paragraph here.
+```
+
 
 ## Working with Content
 
 ### Creating New Service Documentation
 
 Service documentation pages should include:
-- Description of the service
-- Available API endpoints with examples
-- Code examples using the `code` shortcode
-- Links to downloadable Python scripts in `/code/`
+
+* Description of the service
+* Available API endpoints with examples
+* Code examples using the `code` shortcode
+* Links to downloadable Python scripts in `/code/`
 
 Example shortcode usage:
-```
+
+```go-html-template
 {{< code filename="static/code/drum-api.py" name="drum-api.py" language="python" >}}
 ```
 
 ### API Documentation
 
 API documentation in `content/apis/_index.md` provides overviews of:
-- OAI-PMH
-- OpenSearch
-- DSpace REST API
-- OpenAPI Specification
-- SRU (Search/Retrieve via URL)
-- JSON-LD
+
+* OAI-PMH
+* OpenSearch
+* DSpace REST API
+* OpenAPI Specification
+* SRU (Search/Retrieve via URL)
+* JSON-LD
 
 Individual service pages reference these API descriptions with anchor links.
 
 ## Important Notes
 
-- The site runs on port 1314 locally (not the standard Hugo port 1313)
-- Python code examples are meant to be runnable and demonstrate best practices for API usage
-- The `harvest/temp/` directory is used for interrupted downloads and should be cleaned between runs
-- All Python scripts in `static/code/` should use proper error handling and be well-documented
+* The site runs on port 1314 locally (not the standard Hugo port 1313)
+* Python code examples are meant to be runnable and demonstrate best
+  practices for API usage
+* The `harvest/temp/` directory is used for interrupted downloads and should
+  be cleaned between runs
+* All Python scripts in `static/code/` should use proper error handling and be well-documented

@@ -22,28 +22,31 @@ task test-python
 
 The `test_python_examples.py` script:
 
-- **Runs all Python examples** in `static/code/` (except `drum-harvest.py`)
-- **Validates execution** - ensures scripts run without errors
-- **Checks output** - verifies scripts produce reasonable output
-- **Reports results** - provides clear pass/fail summary with detailed error information
-- **Configurable timeout** - prevents hanging on slow scripts (default: 30 seconds)
-- **Verbose mode** - shows detailed output from each test
+* **Runs all Python examples** in `static/code/` (except `drum-harvest.py`)
+* **Validates execution** - ensures scripts run without errors
+* **Checks output** - verifies scripts produce reasonable output
+* **Reports results** - provides clear pass/fail summary with detailed error information
+* **Configurable timeout** - prevents hanging on slow scripts (default: 30 seconds)
+* **Verbose mode** - shows detailed output from each test
 
 ## What Gets Tested
 
 All Python files in `static/code/` are tested except:
-- `drum-harvest.py` - Excluded because it harvests large amounts of data and is too slow for quick testing
+
+* `drum-harvest.py` - Excluded because it harvests large amounts of data and is too slow for quick testing
 
 ## Understanding Results
 
 ### Exit Codes
-- **0** - All tests passed
-- **1** - One or more tests failed
+
+* **0** - All tests passed
+* **1** - One or more tests failed
 
 ### Test Status
-- **✅ PASSED** - Script ran successfully and produced output
-- **❌ FAILED** - Script exited with error or produced no output
-- **⊘ SKIPPED** - Script excluded from testing
+
+* **✅ PASSED** - Script ran successfully and produced output
+* **❌ FAILED** - Script exited with error or produced no output
+* **⊘ SKIPPED** - Script excluded from testing
 
 ## Command-Line Options
 
@@ -84,9 +87,9 @@ python test_python_examples.py --timeout 60
 ## Common Failure Reasons
 
 1. **Network errors** - External APIs might be down or URLs changed
-2. **Missing dependencies** - Ensure `requirements.txt` is installed
-3. **API changes** - External services may have updated their APIs
-4. **Rate limiting** - Too many requests to external services
+1. **Missing dependencies** - Ensure `requirements.txt` is installed
+1. **API changes** - External services may have updated their APIs
+1. **Rate limiting** - Too many requests to external services
 
 ## Continuous Integration
 
@@ -109,18 +112,21 @@ This test script can be integrated into CI/CD pipelines:
 ## Troubleshooting
 
 ### Script fails but works when run manually
-- Check if the script requires environment variables
-- Ensure you're running from the correct directory
-- Verify network connectivity to external APIs
+
+* Check if the script requires environment variables
+* Ensure you're running from the correct directory
+* Verify network connectivity to external APIs
 
 ### All scripts timeout
-- Increase timeout with `--timeout` option
-- Check network connectivity
-- Some APIs may be temporarily slow
+
+* Increase timeout with `--timeout` option
+* Check network connectivity
+* Some APIs may be temporarily slow
 
 ### ImportError or ModuleNotFoundError
-- Activate the virtual environment: `source .venv/bin/activate`
-- Install dependencies: `pip install -r requirements.txt`
+
+* Activate the virtual environment: `source .venv/bin/activate`
+* Install dependencies: `pip install -r requirements.txt`
 
 ## Adding New Test Exclusions
 
