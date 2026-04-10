@@ -162,6 +162,23 @@ Here is a list:
 Another paragraph here.
 ```
 
+### Git Commit Standards
+
+When creating commits, always include a "Co-authored-by" trailer to acknowledge
+AI assistance:
+
+```bash
+git commit -m "feat: add new feature
+
+Detailed description of the changes.
+
+Co-authored-by: Claude <noreply@anthropic.com>"
+```
+
+**Important**: Every commit made by Claude Code must include this trailer.
+This provides transparency about AI-assisted development and maintains proper
+attribution in the repository history.
+
 
 ## Working with Content
 
