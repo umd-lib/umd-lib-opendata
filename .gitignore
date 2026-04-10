@@ -6,3 +6,6 @@ build/
 public/
 resources/
 .hugo_build.lock
+
+# Claude
+.claude/
