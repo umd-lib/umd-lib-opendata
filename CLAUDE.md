@@ -179,7 +179,6 @@ Co-authored-by: Claude <noreply@anthropic.com>"
 This provides transparency about AI-assisted development and maintains proper
 attribution in the repository history.
 
-
 ## Working with Content
 
 ### Creating New Service Documentation
