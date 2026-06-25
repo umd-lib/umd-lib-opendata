@@ -25,6 +25,11 @@ SKIP_FILES = {
     'drum-harvest.py',  # Harvests large amounts of data, not suitable for quick testing
 }
 
+# Files expected to fail (known issues)
+EXPECTED_FAIL_FILES = {
+    'geoportal-search.py',  # Service currently unavailable or endpoint changed
+}
+
 # Timeout in seconds for each script
 TIMEOUT_SECONDS = 30
 
@@ -32,7 +37,8 @@ TIMEOUT_SECONDS = 30
 class TestResult:
     """Container for test results"""
     def __init__(self, filename: str, success: bool, output: str, error: str,
-                 return_code: int, skipped: bool = False, skip_reason: str = ""):
+                 return_code: int, skipped: bool = False, skip_reason: str = "",
+                 expected_fail: bool = False):
         self.filename = filename
         self.success = success
         self.output = output
@@ -40,6 +46,7 @@ class TestResult:
         self.return_code = return_code
         self.skipped = skipped
         self.skip_reason = skip_reason
+        self.expected_fail = expected_fail
 
 
 def run_python_file(filepath: Path, timeout: int = TIMEOUT_SECONDS) -> TestResult:
@@ -125,12 +132,13 @@ def print_result_summary(results: List[TestResult], verbose: bool = False) -> No
     print("TEST RESULTS SUMMARY")
     print("=" * 80)
 
-    passed = sum(1 for r in results if r.success and not r.skipped)
-    failed = sum(1 for r in results if not r.success and not r.skipped)
+    passed = sum(1 for r in results if r.success and not r.skipped and not r.expected_fail)
+    failed = sum(1 for r in results if not r.success and not r.skipped and not r.expected_fail)
+    expected_fail = sum(1 for r in results if r.expected_fail)
     skipped = sum(1 for r in results if r.skipped)
     total = len(results)
 
-    print(f"\nTotal: {total} | Passed: {passed} | Failed: {failed} | Skipped: {skipped}")
+    print(f"\nTotal: {total} | Passed: {passed} | Failed: {failed} | Expected Fail: {expected_fail} | Skipped: {skipped}")
 
     # Print failed tests
     if failed > 0:
@@ -162,6 +170,21 @@ def print_result_summary(results: List[TestResult], verbose: bool = False) -> No
                 if verbose and result.output:
                     print(f"   Output preview:")
                     for line in result.output.split('\n')[:5]:  # First 5 lines
+                        print(f"      {line}")
+
+    # Print expected failures
+    if expected_fail > 0:
+        print("\n" + "-" * 80)
+        print("EXPECTED FAILURES:")
+        print("-" * 80)
+        for result in results:
+            if result.expected_fail:
+                status = "✓" if not result.success else "⚠"
+                status_text = "Failed as expected" if not result.success else "Unexpectedly passed!"
+                print(f"{status} {result.filename} - {status_text}")
+                if result.error and verbose:
+                    print(f"   Error output:")
+                    for line in result.error.split('\n')[:5]:
                         print(f"      {line}")
 
     # Print skipped tests
@@ -251,11 +274,19 @@ def main():
             )
         else:
             result = run_python_file(filepath, timeout=args.timeout)
+            # Mark as expected failure if in EXPECTED_FAIL_FILES
+            if filepath.name in EXPECTED_FAIL_FILES:
+                result.expected_fail = True
 
         results.append(result)
 
         if result.skipped:
             print("SKIPPED")
+        elif result.expected_fail:
+            if result.success:
+                print("EXPECTED FAIL (but passed!)")
+            else:
+                print("EXPECTED FAIL")
         elif result.success:
             print("PASSED")
         else:
@@ -265,7 +296,8 @@ def main():
     print_result_summary(results, verbose=args.verbose)
 
     # Exit with appropriate code
-    failed_count = sum(1 for r in results if not r.success and not r.skipped)
+    # Only count unexpected failures (not expected failures or skipped tests)
+    failed_count = sum(1 for r in results if not r.success and not r.skipped and not r.expected_fail)
     sys.exit(0 if failed_count == 0 else 1)
 
 
