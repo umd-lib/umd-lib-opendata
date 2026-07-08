@@ -12,9 +12,17 @@ tasks:
 
     build:
         desc: "Build the project"
+        vars:
+            BUILD_DIR: '{{default "build" .BUILD_DIR}}'
+            EXTRA_PARAMS: '{{default "" .EXTRA_PARAMS}}'
         cmds:
-            - echo "Building..."
-            - hugo build
+            - hugo build -d '{{.BUILD_DIR}}' {{.EXTRA_PARAMS}}
+
+    build:docker:
+        desc: "Builds the docs for publishing with pre-configured options (for use within Docker container)"
+        cmds:
+            - task: build
+              vars: {BUILD_DIR: '/target', EXTRA_PARAMS: '--noTimes --noChmod --logLevel info'}
 
     serve:
         desc: "Serve the site locally with drafts"
