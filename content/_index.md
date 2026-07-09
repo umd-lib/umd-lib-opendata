@@ -21,8 +21,6 @@ Library](https://docs.python.org/3/library/). Downloadable Python code examples
 may require [installation of external
 modules](https://github.com/umd-lib/umd-lib-opendata#python-environment).
 
-foobar
-
 ## Explore
 
 {{< cards >}}
