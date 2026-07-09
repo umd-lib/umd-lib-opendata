@@ -1,7 +1,7 @@
 
 FROM debian:stable-slim
 
-RUN apt update && apt install -y curl webhook git golang
+RUN apt update && apt install -y curl webhook git golang python3
 
 # Configuration variables
 ENV GIT_REPO_CONTENT_PATH=''
