@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  VERSION: '2.1.0'
+  WEBHOOK_VERSION: 'latest'
   HUGO_BUILDOPTS: ''
 
 tasks:
@@ -36,9 +36,9 @@ tasks:
             - rm -rf public/
 
     deploy:
-        desc: "Builds and pushes the umd-lib-opendata image"
+        desc: "Builds and pushes the opendata-webhook image"
         cmds:
-            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata:{{.VERSION}} --build-arg HUGO_BUILDOPTS="{{.HUGO_BUILDOPTS}}" .
+            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata-webhook:{{.VERSION}} --build-arg HUGO_BUILDOPTS="{{.HUGO_BUILDOPTS}}" .
 
     test-python:
         desc: "Test all Python code examples in static/code/"

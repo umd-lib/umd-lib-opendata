@@ -1,0 +1,25 @@
+[
+  {
+    "id": "refresh",
+    "execute-command": "/scripts/refresh.sh",
+    "command-working-directory": "/tmp",
+    "pass-environment-to-command":
+    [
+      {
+        "source": "payload",
+        "name": "ref",
+        "envname": "HOOK_ref"
+      },
+      {
+        "source": "payload",
+        "name": "repository.clone_url",
+        "envname": "HOOK_repository_clone_url"
+      }
+    ]
+  },
+  {
+    "id": "ready",
+    "execute-command": "/bin/true",
+    "response-message": "OK\n"
+  }
+]
