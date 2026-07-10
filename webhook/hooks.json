@@ -6,6 +6,10 @@
     "pass-environment-to-command":
     [
       {
+        "source": "entire-payload",
+        "envname": "HOOK_payload"
+      },
+      {
         "source": "payload",
         "name": "ref",
         "envname": "HOOK_ref"
@@ -14,6 +18,11 @@
         "source": "payload",
         "name": "repository.clone_url",
         "envname": "HOOK_repository_clone_url"
+      },
+      {
+        "source": "header",
+        "name": "x-hub-signature-256",
+        "envname": "HOOK_signature"
       }
     ]
   },
