@@ -1,4 +1,13 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "pyoai==2.5.0",
+#     # pyoai needs the legacy pkg_resources API (setuptools<81) and lxml<5
+#     "setuptools==70.2.0",
+#     "lxml==4.9.4",
+# ]
+# ///
 
 from itertools import islice
 

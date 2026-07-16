@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "rdflib==7.6.0",
+#     "requests==2.32.3",
+# ]
+# ///
 
 # Use the DSpace API to harvest JSON-LD metadata for items in the UMD Data
 # Community collection in DRUM, and serialize it to RDF Trig format.
