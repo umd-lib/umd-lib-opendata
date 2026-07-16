@@ -1,3 +1,24 @@
+  <!-- UMD Design System assets (CDN, version-pinned) -->
+  {{- /*
+    We deliberately load the *granular* styles, not the full styles.min.css
+    bundle. The full bundle includes base.min.css ("Root and reset styles"),
+    and a second CSS reset layered on top of Hextra's Tailwind preflight causes
+    layout collisions. The web components render into Shadow DOM (their styling
+    is bundled in cdn.js), so from the global sheet they only need:
+      * tokens.min.css   -- :root --umd-* custom properties, which inherit
+                            across the shadow boundary
+      * font-faces.min.css -- @font-face for the UMD brand fonts, which load
+                            document-globally and so reach into shadow DOM
+    cdn.js self-registers all <umd-element-*> elements when loaded as a plain
+    (non-module) script; no init call is required.
+  */ -}}
+  {{- $umdComponentsVersion := "1.19.1" -}}
+  {{- $umdStylesVersion := "1.8.14" -}}
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@{{ $umdStylesVersion }}/dist/css/tokens.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@{{ $umdStylesVersion }}/dist/css/font-faces.min.css">
+  <script src="https://unpkg.com/@universityofmaryland/web-components-library@{{ $umdComponentsVersion }}/dist/cdn.js"></script>
+  <!-- End UMD Design System assets -->
+
   <!-- Matomo -->
   <script>
     var _paq = window._paq = window._paq || [];
