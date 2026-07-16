@@ -2,15 +2,19 @@
 """
 Test runner for Python code examples in static/code/
 
-This script runs each Python example file (except drum-harvest.py) and validates:
+This script runs each Python example file (except drum-harvest.py) via
+`uv run` and validates:
+- The script's PEP 723 inline metadata resolves (dependencies install)
 - The script runs without errors
 - The script produces output
 - The script exits with code 0
 
+Requires uv: https://docs.astral.sh/uv/
+
 Usage:
-    python test_python_examples.py
-    python test_python_examples.py --verbose
-    python test_python_examples.py --file drum-api.py
+    uv run test_python_examples.py
+    uv run test_python_examples.py --verbose
+    uv run test_python_examples.py --file drum-api.py
 """
 
 import argparse
@@ -28,6 +32,10 @@ SKIP_FILES = {
 # Files expected to fail (known issues)
 EXPECTED_FAIL_FILES = {
     'geoportal-search.py',  # Service currently unavailable or endpoint changed
+    # Both Digital Collections OAI endpoints return HTTP 500 on ListRecords
+    # (server-side, reproducible with curl) as of 2026-07-16
+    'digital-collections-oaipmh.py',
+    'digital-collections-av-oaipmh.py',
 }
 
 # Timeout in seconds for each script
@@ -63,9 +71,10 @@ def run_python_file(filepath: Path, timeout: int = TIMEOUT_SECONDS) -> TestResul
     filename = filepath.name
 
     try:
-        # Run the Python file
+        # Run via uv so each script's PEP 723 metadata block is resolved and
+        # validated as part of the test
         result = subprocess.run(
-            [sys.executable, str(filepath)],
+            ['uv', 'run', str(filepath)],
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -87,6 +96,15 @@ def run_python_file(filepath: Path, timeout: int = TIMEOUT_SECONDS) -> TestResul
             return_code=result.returncode
         )
 
+    except FileNotFoundError:
+        return TestResult(
+            filename=filename,
+            success=False,
+            output="",
+            error="uv not found. Install it first: https://docs.astral.sh/uv/ "
+                  "(e.g. `brew install uv`)",
+            return_code=-1
+        )
     except subprocess.TimeoutExpired:
         return TestResult(
             filename=filename,
