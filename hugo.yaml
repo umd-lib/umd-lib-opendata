@@ -1,6 +1,10 @@
 # Hugo configuration file
 title: Open Data
 
+# Canonical site URL; overridden by HUGO_BASEURL in the Docker build and
+# auto-replaced with localhost by `hugo server`
+baseURL: https://opendata.lib.umd.edu/
+
 # import hextra as module
 module:
   imports:
