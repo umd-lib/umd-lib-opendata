@@ -2,17 +2,23 @@
 
 This repository includes a comprehensive test script for validating all Python code examples in `static/code/`.
 
+The test script runs each example via [uv](https://docs.astral.sh/uv/), which
+reads the [PEP 723](https://peps.python.org/pep-0723/) inline metadata block
+at the top of each script and installs its dependencies into an ephemeral
+environment. Install uv first (e.g. `brew install uv`); no virtual
+environment or `pip install` step is needed.
+
 ## Quick Start
 
 ```bash
 # Run all tests
-uv run python test_python_examples.py
+uv run test_python_examples.py
 
 # Run all tests with verbose output
-uv run python test_python_examples.py --verbose
+uv run test_python_examples.py --verbose
 
 # Test a specific file
-uv run python test_python_examples.py --file drum-api.py
+uv run test_python_examples.py --file drum-api.py
 
 # Using task (recommended)
 task test-python
@@ -23,6 +29,8 @@ task test-python
 The `test_python_examples.py` script:
 
 * **Runs all Python examples** in `static/code/` (except `drum-harvest.py`)
+* **Validates inline metadata** - runs each script with `uv run`, so an
+  incomplete or unresolvable PEP 723 dependency block fails the test
 * **Validates execution** - ensures scripts run without errors
 * **Checks output** - verifies scripts produce reasonable output
 * **Reports results** - provides clear pass/fail summary with detailed error information
@@ -46,12 +54,14 @@ All Python files in `static/code/` are tested except:
 
 * **✅ PASSED** - Script ran successfully and produced output
 * **❌ FAILED** - Script exited with error or produced no output
+* **✓ EXPECTED FAIL** - Script failed, but is listed in `EXPECTED_FAIL_FILES`
+  (a known issue, e.g. a service outage); does not fail the test run
 * **⊘ SKIPPED** - Script excluded from testing
 
 ## Command-Line Options
 
 ```bash
-uv run python test_python_examples.py [OPTIONS]
+uv run test_python_examples.py [OPTIONS]
 
 Options:
   -v, --verbose          Show detailed output from each test
@@ -66,28 +76,29 @@ Options:
 
 ### Run all tests with summary
 ```bash
-uv run python test_python_examples.py
+uv run test_python_examples.py
 ```
 
 ### Run with detailed output
 ```bash
-uv run python test_python_examples.py --verbose
+uv run test_python_examples.py --verbose
 ```
 
 ### Test a specific file
 ```bash
-uv run python test_python_examples.py --file drum-api.py
+uv run test_python_examples.py --file drum-api.py
 ```
 
 ### Increase timeout for slow tests
 ```bash
-uv run python test_python_examples.py --timeout 60
+uv run test_python_examples.py --timeout 60
 ```
 
 ## Common Failure Reasons
 
 1. **Network errors** - External APIs might be down or URLs changed
-1. **Missing dependencies** - Ensure dependencies are installed with `uv sync`
+1. **Missing dependencies** - Ensure every third-party import appears in the
+   script's PEP 723 `dependencies` list
 1. **API changes** - External services may have updated their APIs
 1. **Rate limiting** - Too many requests to external services
 
@@ -98,13 +109,10 @@ This test script can be integrated into CI/CD pipelines:
 ```yaml
 # Example GitHub Actions workflow
 - name: Install uv
-  uses: astral-sh/setup-uv@v5
-
-- name: Install dependencies
-  run: uv sync
+  uses: astral-sh/setup-uv@v6
 
 - name: Test Python examples
-  run: uv run python test_python_examples.py
+  run: uv run test_python_examples.py
 ```
 
 ## Troubleshooting
@@ -123,8 +131,9 @@ This test script can be integrated into CI/CD pipelines:
 
 ### ImportError or ModuleNotFoundError
 
-* Run the script through `uv run`, which uses the project environment automatically
-* Install dependencies: `uv sync`
+* Add the missing package to the script's PEP 723 `dependencies` list
+* Keep the version floor the same as the one in `pyproject.toml`; a standalone
+  script inherits nothing from the project environment
 
 ## Adding New Test Exclusions
 
