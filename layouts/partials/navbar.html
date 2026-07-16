@@ -1,59 +1,86 @@
-{{- $navWidth := "hx:max-w-[90rem]" -}}
-{{- with .Site.Params.navbar.width -}}
-  {{ if eq . "normal" -}}
-    {{ $navWidth = "hx:max-w-screen-xl" -}}
-  {{ else if eq . "full" -}}
-    {{ $navWidth = "max-w-full" -}}
-  {{ end -}}
-{{- end -}}
+{{- /*
+  UMD Design System header (Phase 2).
+
+  Replaces Hextra's default top navbar with <umd-element-navigation-header>
+  while preserving the documentation machinery Hextra's JavaScript depends on:
+
+    * The Hextra FlexSearch widget is slotted into `utility-navigation`. Its
+      script binds to `.hextra-search-input`, so slotting the existing
+      search.html partial keeps full-text search working inside the brand shell.
+    * The `.hextra-hamburger-menu` button (mobile doc-sidebar toggle) is kept.
+    * The outer `.hextra-nav-container` wrapper class is retained so any Hextra
+      scroll/scripting that targets it still resolves.
+
+  We do NOT set the component's own `search-url` attribute: that renders the
+  design system's own search UI (a link-out), which would duplicate/replace
+  Hextra's inline search. Give Now maps to the header CTA (cta-url/cta-text).
+*/ -}}
 
 {{- $page := . -}}
 {{- $iconHeight := 24 -}}
+{{- $logoPath := .Site.Params.navbar.logo.path | default "images/logo.svg" -}}
+{{- $logoDarkPath := .Site.Params.navbar.logo.dark | default $logoPath -}}
+{{- $logoWidth := .Site.Params.navbar.logo.width | default "200" -}}
+{{- $logoHeight := .Site.Params.navbar.logo.height | default "60" -}}
+{{- $logoLink := .Site.Params.navbar.logo.link | default .Site.Home.RelPermalink -}}
 
-<div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:bg-transparent hx:print:hidden">
-  <div
-    class="hextra-nav-container-blur hx:pointer-events-none hx:absolute hx:z-[-1] hx:h-full hx:w-full hx:bg-white hx:dark:bg-dark hx:shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)] hx:contrast-more:shadow-[0_0_0_1px_#000] hx:dark:shadow-[0_-1px_0_rgba(255,255,255,.1)_inset] hx:contrast-more:dark:shadow-[0_0_0_1px_#fff]"
-  ></div>
+{{- /* Keep the .hextra-nav-container class (Hextra scroll JS targets it) but
+       drop its sticky/positioning: the UMD header owns sticky via sticky="true",
+       and nesting two sticky contexts causes positioning jank. */ -}}
+<div class="hextra-nav-container hx:w-full hx:print:hidden">
+  <umd-element-navigation-header
+    sticky="true"
+    cta-url="https://giving.umd.edu/giving/showSchool.php?name=libraries"
+    cta-text="Give Now">
 
-  <nav class="hextra-max-navbar-width hx:mx-auto hx:flex hx:items-center hx:justify-end hx:gap-2 hx:h-16 hx:px-6">
-    {{ partial "navbar-title.html" . }}
+    {{- /* Brand / logo. The UMD header keeps a white background in both light
+           and dark site themes, so the light logo (dark text) is used in both;
+           it must not be swapped with site dark mode. A single <img> is slotted
+           because the component forces display:block on ::slotted(img). */ -}}
+    <a slot="logo" href="{{ $logoLink }}" aria-label="{{ .Site.Title }} — Home">
+      <img src="{{ $logoPath | relURL }}"
+        alt="University of Maryland Libraries Logo" width="{{ $logoWidth }}" height="{{ $logoHeight }}" />
+    </a>
 
-    {{- $currentPage := . -}}
-    {{- range .Site.Menus.main -}}
-      {{- if eq .Params.type "search" -}}
-        {{- partial "search.html" (dict "params" .Params) -}}
-      {{- else -}}
-        {{- $link := .URL -}}
-        {{- $external := strings.HasPrefix $link "http" -}}
-        {{- with .PageRef -}}
-          {{- if hasPrefix . "/" -}}
-            {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+    {{- /* Primary navigation: text menu items become nav-items */ -}}
+    <div slot="main-navigation">
+      {{- range .Site.Menus.main -}}
+        {{- if or (eq .Params.type "search") .Params.icon -}}
+          {{- /* search + icon-only items go in utility-navigation below */ -}}
+        {{- else -}}
+          {{- $link := .URL -}}
+          {{- with .PageRef -}}
+            {{- if hasPrefix . "/" -}}
+              {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+            {{- end -}}
           {{- end -}}
+          <umd-element-nav-item>
+            <a slot="primary-link" href="{{ $link }}">{{ .Name }}</a>
+          </umd-element-nav-item>
         {{- end -}}
+      {{- end -}}
+    </div>
 
-        {{- if eq .Params.type "link" -}}
-          {{- partial "navbar-link.html" (dict "currentPage" $currentPage "link" $link "external" $external "item" . "icon" .Params.icon) -}}
-        {{- else if eq .Params.type "theme-toggle" -}}
-          {{- partial "theme-toggle.html" (dict "iconHeight" $iconHeight "hideLabel" (not .Params.label) "iconHeight" $iconHeight "location" "top" "class" "hx:p-2") -}}
-        {{- else if eq .Params.type "language-switch" -}}
-          {{- partial "language-switch" (dict "context" $page "grow" false "hideLabel" (not .Params.label) "iconName" (.Params.icon | default "translate") "iconHeight" $iconHeight "location" "top" "class" "hx:p-2") -}}
+    {{- /* Utility navigation: inline search + icon links + mobile toggle */ -}}
+    <div slot="utility-navigation" class="hextra-navbar-utility hx:flex hx:items-center hx:gap-2">
+      {{- range .Site.Menus.main -}}
+        {{- if eq .Params.type "search" -}}
+          {{- partial "search.html" (dict "params" .Params "location" "navbar") -}}
         {{- else if .Params.icon -}}
-          {{- /* Display icon menu item */ -}}
-          {{- if not $link -}}{{ warnf "Icon menu item '%s' has no URL" .Name }}{{- end -}}
-          {{- $rel := cond (eq .Params.icon "mastodon") "noreferrer me" "noreferrer" }}
-          <a class="hx:p-2 hx:text-current" {{ if $external }}target="_blank" rel="{{ $rel }}"{{ end }} href="{{ $link }}">
+          {{- $link := .URL -}}
+          {{- $external := strings.HasPrefix $link "http" -}}
+          {{- $rel := cond (eq .Params.icon "mastodon") "noreferrer me" "noreferrer" -}}
+          <a class="hx:p-2 hx:text-current" {{ if $external }}target="_blank" rel="{{ $rel }}"{{ end }} href="{{ $link }}" title="{{ or (T .Identifier) .Name | safeHTML }}">
             {{- partial "utils/icon.html" (dict "name" .Params.icon "attributes" (printf "height=%d" $iconHeight)) -}}
             <span class="hx:sr-only">{{ or (T .Identifier) .Name | safeHTML }}</span>
           </a>
-        {{- else -}}
-          {{- partial "navbar-link.html" (dict "currentPage" $currentPage "link" $link "external" $external "item" .) -}}
         {{- end -}}
       {{- end -}}
-    {{- end -}}
 
-
-    <button type="button" aria-label="Menu" class="hextra-hamburger-menu hx:cursor-pointer hx:-mr-2 hx:rounded-sm hx:p-2 hx:active:bg-gray-400/20 hx:md:hidden">
-      {{- partial "utils/icon.html" (dict "name" "hamburger-menu" "attributes" (printf "height=%d" $iconHeight)) -}}
-    </button>
-  </nav>
+      <button type="button" aria-label="{{ (T `menu`) | default `Menu` }}" aria-expanded="false"
+        class="hextra-hamburger-menu hx:cursor-pointer hx:rounded-sm hx:p-2 hx:active:bg-gray-400/20 hx:md:hidden hx:hextra-focus-visible-inset">
+        {{- partial "utils/icon.html" (dict "name" "hamburger-menu" "attributes" (printf "height=%d" $iconHeight)) -}}
+      </button>
+    </div>
+  </umd-element-navigation-header>
 </div>

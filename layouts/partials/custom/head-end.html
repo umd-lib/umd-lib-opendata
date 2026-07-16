@@ -17,6 +17,26 @@
   <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@{{ $umdStylesVersion }}/dist/css/tokens.min.css">
   <link rel="stylesheet" href="https://unpkg.com/@universityofmaryland/web-styles-library@{{ $umdStylesVersion }}/dist/css/font-faces.min.css">
   <script src="https://unpkg.com/@universityofmaryland/web-components-library@{{ $umdComponentsVersion }}/dist/cdn.js"></script>
+  {{- /*
+    Dark-mode sync. Hextra toggles a `.dark` class on <html>; the UMD components
+    read a per-element `data-theme="dark"`. Mirror Hextra's theme onto the brand
+    components (and swap the navbar logo) on load and whenever the class changes.
+  */ -}}
+  <script>
+    (function () {
+      var SELECTOR = 'umd-element-navigation-header, umd-element-footer, umd-element-hero, umd-element-card';
+      function apply() {
+        var isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll(SELECTOR).forEach(function (el) {
+          if (isDark) { el.setAttribute('data-theme', 'dark'); }
+          else { el.removeAttribute('data-theme'); }
+        });
+      }
+      new MutationObserver(apply).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      if (document.readyState !== 'loading') { apply(); } else { document.addEventListener('DOMContentLoaded', apply); }
+      window.addEventListener('load', apply);
+    })();
+  </script>
   <!-- End UMD Design System assets -->
 
   <!-- Matomo -->
