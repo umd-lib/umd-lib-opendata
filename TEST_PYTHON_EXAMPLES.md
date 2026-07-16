@@ -34,7 +34,9 @@ The `test_python_examples.py` script:
 * **Validates execution** - ensures scripts run without errors
 * **Checks output** - verifies scripts produce reasonable output
 * **Reports results** - provides clear pass/fail summary with detailed error information
-* **Configurable timeout** - prevents hanging on slow scripts (default: 30 seconds)
+* **Configurable timeout** - prevents hanging on slow scripts (default: 120
+  seconds, sized to cover `uv run` resolving a script's dependencies on a
+  cold cache)
 * **Verbose mode** - shows detailed output from each test
 
 ## What Gets Tested
@@ -67,7 +69,7 @@ Options:
   -v, --verbose          Show detailed output from each test
   -f FILE, --file FILE   Test only a specific file (e.g., drum-api.py)
   -t SECONDS, --timeout SECONDS
-                         Timeout in seconds for each script (default: 30)
+                         Timeout in seconds for each script (default: 120)
   --code-dir PATH        Path to code directory (default: static/code/)
   -h, --help            Show help message
 ```

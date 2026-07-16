@@ -38,8 +38,10 @@ EXPECTED_FAIL_FILES = {
     'digital-collections-av-oaipmh.py',
 }
 
-# Timeout in seconds for each script
-TIMEOUT_SECONDS = 30
+# Timeout in seconds for each script. Generous because `uv run` may need to
+# resolve and download a script's PEP 723 dependencies on a cold cache
+# (e.g. a fresh CI runner) before the script itself starts.
+TIMEOUT_SECONDS = 120
 
 
 class TestResult:
@@ -164,7 +166,7 @@ def print_result_summary(results: List[TestResult], verbose: bool = False) -> No
         print("FAILED TESTS:")
         print("-" * 80)
         for result in results:
-            if not result.success and not result.skipped:
+            if not result.success and not result.skipped and not result.expected_fail:
                 print(f"\n❌ {result.filename}")
                 print(f"   Return code: {result.return_code}")
                 if result.error:

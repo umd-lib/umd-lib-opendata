@@ -15,8 +15,11 @@
 
 {{- if eq .Params.language "python" -}}
     {{- /* Every Python example carries PEP 723 inline metadata, so uv can run
-           it straight from its published URL with no setup */ -}}
-    {{- $runCmd := printf "uv run %s" (strings.TrimPrefix "static/" .Params.filename | absURL) -}}
+           it straight from its published URL with no setup. Content pages pass
+           filename with or without a leading slash; Hugo publishes static/
+           content at the site root, so strip both before building the URL */ -}}
+    {{- $urlPath := strings.TrimPrefix "static/" (strings.TrimPrefix "/" .Params.filename) -}}
+    {{- $runCmd := printf "uv run %s" ($urlPath | absURL) -}}
     <p class="hx:mt-6">Run this example with <a href="https://docs.astral.sh/uv/guides/scripts/">uv</a> &mdash; no download or setup required:</p>
     <div class="hextra-code-block hx:relative hx:mt-6 hx:group/code">
         <div>{{- highlight $runCmd "bash" -}}</div>
