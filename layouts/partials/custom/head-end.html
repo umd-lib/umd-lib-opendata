@@ -37,6 +37,43 @@
       window.addEventListener('load', apply);
     })();
   </script>
+  {{- /*
+    Header layout fixes injected into the navigation-header's Shadow DOM. Two
+    things the component leaves to the host that light-DOM CSS cannot reach
+    across the shadow boundary:
+      1. Gutters — the header lays its content out full-bleed (no max-width,
+         no side padding), so the logo/nav pin to the viewport edges. Constrain
+         the inner wrapper to the site max width with side padding.
+      2. Search dropdown layering — the utility row (which holds the slotted
+         Hextra search) is painted BELOW the navigation row, so the results
+         dropdown gets covered by the nav items. Give the utility row a higher
+         stacking context than the navigation row.
+    Class names are the component's own (v1.19.x); revisit on a major upgrade.
+  */ -}}
+  <script>
+    (function () {
+      var CSS =
+        '.element-header-wrapper{max-width:90rem;margin-inline:auto;' +
+        'padding-inline:clamp(1rem,4vw,2.5rem);box-sizing:border-box}' +
+        '.element-header-utility-row{position:relative;z-index:2}' +
+        '.element-header-navigation-row{position:relative;z-index:1}';
+      function inject() {
+        var h = document.querySelector('umd-element-navigation-header');
+        if (!h || !h.shadowRoot) { return false; }
+        if (h.shadowRoot.getElementById('umd-header-layout-fix')) { return true; }
+        var s = document.createElement('style');
+        s.id = 'umd-header-layout-fix';
+        s.textContent = CSS;
+        h.shadowRoot.appendChild(s);
+        return true;
+      }
+      if (!inject()) {
+        var n = 0, iv = setInterval(function () {
+          if (inject() || ++n > 60) { clearInterval(iv); }
+        }, 100);
+      }
+    })();
+  </script>
   <!-- End UMD Design System assets -->
 
   <!-- Matomo -->

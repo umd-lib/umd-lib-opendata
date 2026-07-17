@@ -24,12 +24,12 @@
 {{- $logoHeight := .Site.Params.navbar.logo.height | default "60" -}}
 {{- $logoLink := .Site.Params.navbar.logo.link | default .Site.Home.RelPermalink -}}
 
-{{- /* Keep the .hextra-nav-container class (Hextra scroll JS targets it) but
-       drop its sticky/positioning: the UMD header owns sticky via sticky="true",
-       and nesting two sticky contexts causes positioning jank. */ -}}
-<div class="hextra-nav-container hx:w-full hx:print:hidden">
+{{- /* The container owns sticky positioning and the header's stacking context
+       (Hextra's default, plus a higher z-index than page content so the slotted
+       search dropdown overlays the hero/cards below). The component is NOT given
+       sticky="true" here, to avoid nesting two sticky contexts. */ -}}
+<div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:print:hidden">
   <umd-element-navigation-header
-    sticky="true"
     cta-url="https://giving.umd.edu/giving/showSchool.php?name=libraries"
     cta-text="Give Now">
 

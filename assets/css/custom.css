@@ -1,0 +1,46 @@
+/*
+ * UMD Design System alignment (Phase 4).
+ *
+ * Loaded via Hextra's assets/css/custom.css hook, which the theme concatenates
+ * AFTER its own compiled CSS, so these rules win. Values come from the design
+ * system's --umd-* tokens (tokens.min.css, loaded in <head>) rather than being
+ * hand-picked, so they track the brand.
+ */
+
+/* Retune Hextra's primary accent (links, active nav, focus rings, selection)
+ * to UMD red. Hextra derives its accent from these HSL parts; 351deg/80%/45%
+ * is UMD red shifted slightly darker so text-sized uses keep adequate
+ * contrast. #E21833 = hsl(351 78% 49%). */
+:root {
+  --primary-hue: 351deg;
+  --primary-saturation: 78%;
+  --primary-lightness: 45%;
+}
+
+/* Body links: pin to the darker UMD red token for WCAG AA contrast on white
+ * (#A90007 ~= 7:1). Bright #E21833 is ~4:1 and fails AA for normal text.
+ * On dark backgrounds use the base brand red, which clears AA on near-black. */
+.content a {
+  color: var(--umd-color-red-dark, #a90007);
+}
+.dark .content a {
+  color: var(--umd-color-red, #e21833);
+}
+
+/* Note: the header's gutters and the search-dropdown layering are handled by a
+ * stylesheet injected INTO the header's shadow root (see head-end.html). Those
+ * live in the shadow DOM because the header lays its content out full-bleed and
+ * paints its nav row above its utility (search) row; light-DOM CSS cannot reach
+ * across the shadow boundary to fix either. */
+
+/* Align content headings to the UMD brand sans (Interstate), matching the
+ * typography rendered inside the header/hero/footer components. Body copy is
+ * left on Hextra's stack for reading comfort. */
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  font-family: var(--umd-font-sans, "Interstate", Helvetica, Arial, sans-serif);
+}
