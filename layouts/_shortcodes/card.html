@@ -1,0 +1,27 @@
+{{- /*
+  UMD Design System card (Phase 3), overriding Hextra's card shortcode.
+
+  Renders each {{< card >}} as a bordered <umd-element-card> with a linked
+  headline, so the home "Explore" grid and the Services landing align with the
+  design system without changing any content. Hextra's `cards` grid wrapper
+  (.hextra-cards) still lays them out in columns.
+
+  Supported params (compatible subset of Hextra's card): link, title, subtitle.
+  The `icon` param is intentionally ignored: the UMD card is a headline/text
+  component and does not take Hextra's named nav icons.
+*/ -}}
+{{- $link := .Get "link" -}}
+{{- $title := .Get "title" -}}
+{{- $subtitle := .Get "subtitle" -}}
+{{- $href := $link -}}
+{{- if and $href (not (urls.Parse $href).Scheme) -}}
+  {{- if hasPrefix $href "/" -}}
+    {{- $href = relURL (strings.TrimPrefix "/" $href) -}}
+  {{- else -}}
+    {{- $href = relURL $href -}}
+  {{- end -}}
+{{- end -}}
+<umd-element-card data-visual-bordered="true">
+  <a slot="headline" href="{{ $href }}">{{ $title }}</a>
+  {{- with $subtitle }}<p slot="text">{{ . }}</p>{{ end }}
+</umd-element-card>
