@@ -24,6 +24,21 @@
 {{- $logoHeight := .Site.Params.navbar.logo.height | default "60" -}}
 {{- $logoLink := .Site.Params.navbar.logo.link | default .Site.Home.RelPermalink -}}
 
+{{- /* UMD red utility strip (the "University of Maryland" brand bar). The design
+       system's standalone utility-header component is NOT registered by the CDN
+       bundle (it exists only as an internal building block of the navigation
+       header), so this strip is built by hand from --umd-* brand tokens
+       (see .umd-utility-bar in custom.css). It sits above the sticky nav
+       container so it scrolls away while the main navigation stays pinned. */ -}}
+<div class="umd-utility-bar">
+  <div class="umd-utility-bar__inner">
+    <a class="umd-utility-bar__brand" href="https://umd.edu" target="_blank" rel="noopener noreferrer">University of Maryland</a>
+    <nav class="umd-utility-bar__nav" aria-label="University">
+      <a href="https://www.lib.umd.edu/" target="_blank" rel="noopener noreferrer">Libraries Home</a>
+    </nav>
+  </div>
+</div>
+
 {{- /* The container owns sticky positioning and the header's stacking context
        (Hextra's default, plus a higher z-index than page content so the slotted
        search dropdown overlays the hero/cards below). The component is NOT given

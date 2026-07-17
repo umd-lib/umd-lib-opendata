@@ -74,6 +74,42 @@
       }
     })();
   </script>
+  {{- /*
+    Accessibility fix for Hextra's FlexSearch results. When a result carries a
+    section prefix, Hextra appends a bare <div class="hextra-search-prefix">
+    directly into the results <ul>, which violates WCAG 1.3.1 (a <ul> may only
+    directly contain <li>). Wrap those prefix divs in <li> as results render,
+    keeping the section headers in the a11y tree and the list valid. This is a
+    pre-existing theme issue, fixed here without forking Hextra's search script.
+  */ -}}
+  <script>
+    (function () {
+      function wrapPrefixes(ul) {
+        ul.querySelectorAll(':scope > .hextra-search-prefix').forEach(function (div) {
+          var li = document.createElement('li');
+          li.className = 'hextra-search-prefix-item';
+          div.parentNode.insertBefore(li, div);
+          li.appendChild(div);
+        });
+      }
+      function attach() {
+        var ul = document.querySelector('.hextra-search-results');
+        if (!ul || ul.dataset.umdWrapAttached) { return !!ul; }
+        ul.dataset.umdWrapAttached = '1';
+        var obs = new MutationObserver(function () {
+          obs.disconnect();
+          wrapPrefixes(ul);
+          obs.observe(ul, { childList: true });
+        });
+        obs.observe(ul, { childList: true });
+        wrapPrefixes(ul);
+        return true;
+      }
+      if (!attach()) {
+        var n = 0, iv = setInterval(function () { if (attach() || ++n > 60) clearInterval(iv); }, 100);
+      }
+    })();
+  </script>
   <!-- End UMD Design System assets -->
 
   <!-- Matomo -->
