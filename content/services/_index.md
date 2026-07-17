@@ -1,5 +1,8 @@
 ---
 title: Services
+# Render as a card portal: the UMD card grid below is the navigation, so the
+# Hextra sidebar (which would list the same services) is hidden on this landing.
+portal: true
 ---
 
 List of services, with their technologies, endpoints, and examples.
