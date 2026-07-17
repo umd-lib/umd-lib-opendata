@@ -1,6 +1,14 @@
 ---
 title: University of Maryland Libraries Open Data
 toc: false
+hero:
+  eyebrow: UMD Libraries
+  tagline: >-
+    Open documentation, APIs, services, and datasets from the University of
+    Maryland Libraries — built to promote equitable, open, and transparent
+    scholarship.
+  cta_text: Explore the APIs
+  cta_url: /apis
 ---
 
 This collection of [open data](https://en.wikipedia.org/wiki/Open_data)

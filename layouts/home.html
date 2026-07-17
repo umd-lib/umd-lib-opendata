@@ -1,0 +1,36 @@
+{{ define "main" }}
+  {{- /*
+    UMD Design System home layout (Phase 3), overriding Hextra's home.html.
+
+    A full-width <umd-element-hero> is rendered above the standard Hextra
+    content column, driven by optional front-matter `hero.*` params. The hero's
+    headline carries the page <h1>, so Hextra's default title <h1> is dropped
+    here to avoid a duplicate top-level heading (accessibility: one h1 per page).
+    Everything below the hero is Hextra's unchanged content/sidebar/toc machinery.
+  */ -}}
+  {{- $hero := .Params.hero | default dict -}}
+  <umd-element-hero data-display="stacked">
+    {{- with $hero.eyebrow }}<p slot="eyebrow">{{ . }}</p>{{ end }}
+    <h1 slot="headline">{{ .Title }}</h1>
+    {{- with $hero.tagline }}<p slot="text">{{ . }}</p>{{ end }}
+    {{- with $hero.cta_url }}
+    <div slot="actions">
+      <umd-element-call-to-action data-display="primary">
+        <a href="{{ . | relURL }}">{{ $hero.cta_text | default "Learn more" }}</a>
+      </umd-element-call-to-action>
+    </div>
+    {{- end }}
+  </umd-element-hero>
+
+  <div class='hx:mx-auto hx:flex hextra-max-page-width'>
+    {{ partial "sidebar.html" (dict "context" . "disableSidebar" true "displayPlaceholder" true) }}
+    {{ partial "toc.html" . }}
+    <article class="hx:w-full hx:break-words hx:flex hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
+      <main id="content" class="hx:w-full hx:min-w-0 hextra-max-content-width hx:px-6 hx:pt-4 hx:md:px-12">
+        <div class="content">
+          {{ .Content }}
+        </div>
+      </main>
+    </article>
+  </div>
+{{ end }}
