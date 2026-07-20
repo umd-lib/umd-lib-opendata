@@ -17,8 +17,10 @@
   --primary-lightness: 45%;
 }
 
-/* Body links: pin to the darker UMD red token for WCAG AA contrast on white
- * (#A90007 ~= 7:1). Bright #E21833 is ~4:1 and fails AA for normal text.
+/* Body links: pin to the darker UMD red token on white. Both brand reds clear
+ * WCAG AA for normal text -- #E21833 is 4.76:1 and #A90007 is 7.81:1 -- so this
+ * is a headroom choice, not a compliance fix: 4.76 sits 0.26 above the 4.5
+ * threshold, and link text is where that margin is worth spending.
  * On dark backgrounds use the base brand red, which clears AA on near-black. */
 .content a {
   color: var(--umd-color-red-dark, #a90007);
