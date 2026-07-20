@@ -21,12 +21,17 @@
  * WCAG AA for normal text -- #E21833 is 4.76:1 and #A90007 is 7.81:1 -- so this
  * is a headroom choice, not a compliance fix: 4.76 sits 0.26 above the 4.5
  * threshold, and link text is where that margin is worth spending.
- * On dark backgrounds use the base brand red, which clears AA on near-black. */
+ *
+ * On dark backgrounds the brand red does NOT hold up: #E21833 on Hextra's
+ * #111111 is 3.97:1, under the 4.5 floor for normal text, and #A90007 is worse
+ * at 2.42:1. umdlib_umdds solves this in css/base.css by remapping
+ * --maryland-red to the brand yellow under .dark-theme; the same swap here
+ * gives 13.01:1. */
 .content a {
   color: var(--umd-color-red-dark, #a90007);
 }
 .dark .content a {
-  color: var(--umd-color-red, #e21833);
+  color: var(--umd-color-gold, #ffd200);
 }
 
 /* UMD red utility strip (the "University of Maryland" brand bar). Built from

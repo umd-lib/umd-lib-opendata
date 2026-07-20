@@ -52,26 +52,77 @@
   */ -}}
   <script>
     (function () {
-      var CSS =
-        '.element-header-wrapper{max-width:90rem;margin-inline:auto;' +
-        'padding-inline:clamp(1rem,4vw,2.5rem);box-sizing:border-box}' +
-        '.element-header-utility-row{position:relative;z-index:2}' +
-        '.element-header-navigation-row{position:relative;z-index:1}';
-      function inject() {
-        var h = document.querySelector('umd-element-navigation-header');
-        if (!h || !h.shadowRoot) { return false; }
-        if (h.shadowRoot.getElementById('umd-header-layout-fix')) { return true; }
+      /*
+        Dark-theme text colors. The hero and card components hardcode
+        `:host { color: #000000 }` and a #454545 body gray, and do not remap
+        either for data-theme="dark" -- on Hextra's #111111 dark background the
+        hero headline and every card headline measure 1.11:1 and the hero
+        subtitle 1.97:1, all far below the WCAG AA floor.
+
+        The replacement values are the umdlib_umdds inversion (css/base.css
+        `.dark-theme`): --black #000000 -> #ffffff, --dark-gray #454545 ->
+        #f1f1f1. Using the Libraries theme's own mapping rather than picking
+        colors keeps this consistent with the rest of the estate.
+      */
+      var DARK =
+        ':host([data-theme="dark"]){color:#ffffff}' +
+        ':host([data-theme="dark"]) h1,:host([data-theme="dark"]) h2,' +
+        ':host([data-theme="dark"]) h3,:host([data-theme="dark"]) span,' +
+        ':host([data-theme="dark"]) a{color:#ffffff}' +
+        /*
+          The hero eyebrow is a <p> printed on a brand-yellow ribbon, so it must
+          keep dark text; only the body paragraph lightens. Excluding by class
+          substring fails safe -- if the component renames the eyebrow the text
+          goes light-on-yellow, which is visibly wrong rather than invisible.
+        */
+        ':host([data-theme="dark"]) p:not([class*="eyebrow"]){color:#f1f1f1}';
+
+      var PATCHES = [
+        {
+          id: 'umd-header-layout-fix',
+          selector: 'umd-element-navigation-header',
+          css:
+            '.element-header-wrapper{max-width:90rem;margin-inline:auto;' +
+            'padding-inline:clamp(1rem,4vw,2.5rem);box-sizing:border-box}' +
+            '.element-header-utility-row{position:relative;z-index:2}' +
+            '.element-header-navigation-row{position:relative;z-index:1}'
+        },
+        { id: 'umd-hero-dark-fix', selector: 'umd-element-hero', css: DARK },
+        { id: 'umd-card-dark-fix', selector: 'umd-element-card', css: DARK }
+      ];
+
+      function injectInto(el, patch) {
+        if (!el.shadowRoot) { return false; }
+        if (el.shadowRoot.getElementById(patch.id)) { return true; }
         var s = document.createElement('style');
-        s.id = 'umd-header-layout-fix';
-        s.textContent = CSS;
-        h.shadowRoot.appendChild(s);
+        s.id = patch.id;
+        s.textContent = patch.css;
+        el.shadowRoot.appendChild(s);
         return true;
       }
-      if (!inject()) {
-        var n = 0, iv = setInterval(function () {
-          if (inject() || ++n > 60) { clearInterval(iv); }
-        }, 100);
+
+      /*
+        Patch whatever is present on each tick and keep ticking for a fixed
+        window. This script runs in <head>, so on the first pass the body is not
+        parsed and no component exists yet; and pages differ in which components
+        they carry (section landings have cards but no hero). Both make
+        "everything is patched" useless as a stop condition. injectInto is
+        idempotent, so re-running costs a guard check per element.
+      */
+      function inject() {
+        PATCHES.forEach(function (patch) {
+          Array.prototype.forEach.call(
+            document.querySelectorAll(patch.selector),
+            function (el) { injectInto(el, patch); }
+          );
+        });
       }
+
+      inject();
+      var n = 0, iv = setInterval(function () {
+        inject();
+        if (++n > 60) { clearInterval(iv); }
+      }, 100);
     })();
   </script>
   {{- /*
