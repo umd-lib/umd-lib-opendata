@@ -107,6 +107,26 @@ The Hugo site content is organized as follows:
 
 * **`layouts/_shortcodes/code.html`** - Custom shortcode for embedding Python code files directly into content with syntax highlighting and copy button
 
+### Editing Design System Content and Brand
+
+Where the UMD Design System brand shell is edited:
+
+* **Hero** - front-matter `hero.*` in `content/_index.md`
+* **Cards** - the overridden shortcode `layouts/_shortcodes/card.html`;
+  authored as normal `{{< card >}}` in content
+* **Brand color / type** - `--primary-*` and `--umd-*` tokens in
+  `assets/css/custom.css`
+* **Card-portal landings** (sidebar hidden, card grid as the only navigation) -
+  `portal: true` front matter, handled by `layouts/list.html`
+
+The `<umd-element-*>` components render into Shadow DOM, so light-DOM CSS
+cannot reach their internals. Layout and dark-theme text-colour corrections are
+injected into component shadow roots by a patch table in
+`layouts/partials/custom/head-end.html`, which targets the components' own
+class names. Those break silently on a component version bump, with no build
+error - check there first if header layout, the search dropdown, or dark-mode
+legibility regresses.
+
 ### Python Code Examples
 
 The `static/code/` directory contains working Python examples for:
