@@ -66,18 +66,12 @@ scripts that demonstrate how to query UMD Libraries services (OAI-PMH,
 OpenSearch, the DSpace REST API, JSON-LD, and more). They require Python
 3.12+; the pinned version lives in [`.python-version`](.python-version).
 
-Set up an environment with [pyenv](https://github.com/pyenv/pyenv) and venv:
+Set up an environment with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-# Install the pinned Python version
-pyenv install --skip-existing $(cat .python-version)
-
-# Create and activate a virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Create the environment and install dependencies
+# (uv installs the pinned Python version automatically if needed)
+uv sync
 ```
 
 Run the examples' test suite to confirm they work:

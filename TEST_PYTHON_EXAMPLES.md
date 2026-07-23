@@ -6,13 +6,13 @@ This repository includes a comprehensive test script for validating all Python c
 
 ```bash
 # Run all tests
-python test_python_examples.py
+uv run python test_python_examples.py
 
 # Run all tests with verbose output
-python test_python_examples.py --verbose
+uv run python test_python_examples.py --verbose
 
 # Test a specific file
-python test_python_examples.py --file drum-api.py
+uv run python test_python_examples.py --file drum-api.py
 
 # Using task (recommended)
 task test-python
@@ -51,7 +51,7 @@ All Python files in `static/code/` are tested except:
 ## Command-Line Options
 
 ```bash
-python test_python_examples.py [OPTIONS]
+uv run python test_python_examples.py [OPTIONS]
 
 Options:
   -v, --verbose          Show detailed output from each test
@@ -66,28 +66,28 @@ Options:
 
 ### Run all tests with summary
 ```bash
-python test_python_examples.py
+uv run python test_python_examples.py
 ```
 
 ### Run with detailed output
 ```bash
-python test_python_examples.py --verbose
+uv run python test_python_examples.py --verbose
 ```
 
 ### Test a specific file
 ```bash
-python test_python_examples.py --file drum-api.py
+uv run python test_python_examples.py --file drum-api.py
 ```
 
 ### Increase timeout for slow tests
 ```bash
-python test_python_examples.py --timeout 60
+uv run python test_python_examples.py --timeout 60
 ```
 
 ## Common Failure Reasons
 
 1. **Network errors** - External APIs might be down or URLs changed
-1. **Missing dependencies** - Ensure `requirements.txt` is installed
+1. **Missing dependencies** - Ensure dependencies are installed with `uv sync`
 1. **API changes** - External services may have updated their APIs
 1. **Rate limiting** - Too many requests to external services
 
@@ -97,16 +97,14 @@ This test script can be integrated into CI/CD pipelines:
 
 ```yaml
 # Example GitHub Actions workflow
-- name: Setup Python
-  uses: actions/setup-python@v4
-  with:
-    python-version: '3.12'
+- name: Install uv
+  uses: astral-sh/setup-uv@v5
 
 - name: Install dependencies
-  run: pip install -r requirements.txt
+  run: uv sync
 
 - name: Test Python examples
-  run: python test_python_examples.py
+  run: uv run python test_python_examples.py
 ```
 
 ## Troubleshooting
@@ -125,8 +123,8 @@ This test script can be integrated into CI/CD pipelines:
 
 ### ImportError or ModuleNotFoundError
 
-* Activate the virtual environment: `source .venv/bin/activate`
-* Install dependencies: `pip install -r requirements.txt`
+* Run the script through `uv run`, which uses the project environment automatically
+* Install dependencies: `uv sync`
 
 ## Adding New Test Exclusions
 

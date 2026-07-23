@@ -44,16 +44,13 @@ Python scripts in `static/code/` demonstrate API usage for various UMD Libraries
 
 ### Setup Python Environment
 
+The project uses [uv](https://docs.astral.sh/uv/) for Python environment and
+dependency management:
+
 ```bash
-# Install Python version from .python-version
-pyenv install --skip-existing $(cat .python-version)
-
-# Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+# Create the environment and install dependencies
+# (uv installs the pinned Python version from .python-version if needed)
+uv sync
 ```
 
 ### Testing Python Examples
@@ -65,20 +62,24 @@ Test all Python code examples to ensure they run correctly:
 task test-python
 
 # Or run directly with options
-python test_python_examples.py --verbose
-python test_python_examples.py --file drum-api.py
+uv run python test_python_examples.py --verbose
+uv run python test_python_examples.py --file drum-api.py
 ```
 
 See `TEST_PYTHON_EXAMPLES.md` for detailed documentation.
 
 ### Python Dependencies
 
-The `requirements.txt` includes:
+Dependencies are declared in `pyproject.toml` and locked in `uv.lock`:
 
-* `pyoai==2.5.0` - OAI-PMH protocol client for metadata harvesting
-* `rdflib==7.6.0` - RDF and JSON-LD processing for semantic data
-* `requests==2.32.3` - HTTP client for API requests
-* `sru-queryer==2.1.3` - SRU (Search/Retrieve via URL) protocol client
+* `pyoai` - OAI-PMH protocol client for metadata harvesting
+* `rdflib` - RDF and JSON-LD processing for semantic data
+* `requests` - HTTP client for API requests
+* `sru-queryer` - SRU (Search/Retrieve via URL) protocol client
+
+Two constraints exist solely because `pyoai` is unmaintained: `setuptools<81`
+(it imports `pkg_resources` without declaring it) and `lxml<5` (it calls the
+removed `XPathElementEvaluator.evaluate` API).
 
 ## Architecture
 
