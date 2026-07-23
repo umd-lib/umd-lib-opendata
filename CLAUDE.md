@@ -72,14 +72,11 @@ See `TEST_PYTHON_EXAMPLES.md` for detailed documentation.
 
 Dependencies are declared in `pyproject.toml` and locked in `uv.lock`:
 
-* `pyoai` - OAI-PMH protocol client for metadata harvesting
+* `oaipmh` - OAI-PMH protocol client for metadata harvesting (maintained
+  fork of `pyoai`; same API and import path)
 * `rdflib` - RDF and JSON-LD processing for semantic data
 * `requests` - HTTP client for API requests
 * `sru-queryer` - SRU (Search/Retrieve via URL) protocol client
-
-Two constraints exist solely because `pyoai` is unmaintained: `setuptools<81`
-(it imports `pkg_resources` without declaring it) and `lxml<5` (it calls the
-removed `XPathElementEvaluator.evaluate` API).
 
 ## Architecture
 

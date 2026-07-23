@@ -5,25 +5,18 @@ description = "Dependencies for the Python code examples in static/code/"
 requires-python = ">=3.12"
 dependencies = [
     # OAI-PMH protocol client for metadata harvesting
-    "pyoai>=2.5.0",
+    # (eth-library/oaipmh, the endorsed maintained fork of pyoai; same API)
+    "oaipmh>=3.2.0",
     # RDF and JSON-LD processing for semantic data
     "rdflib>=7.6.0",
     # HTTP client for API requests (>=2.32.4 fixes CVE-2024-47081 .netrc leak)
     "requests>=2.32.4",
     # SRU (Search/Retrieve via URL) protocol client
     "sru-queryer>=2.1.3",
-    # pyoai imports pkg_resources at runtime but does not declare setuptools;
-    # newer setuptools no longer ships pkg_resources, so cap below 81.
-    # Required until pyoai drops pkg_resources or is replaced
-    "setuptools<81",
 ]
 
 [tool.uv]
 # Not an installable package; just a dependency environment for static/code/
 package = false
-constraint-dependencies = [
-    # Security floor for transitive dep of requests (CVE-2025-50181/50182)
-    "urllib3>=2.5.0",
-    # lxml 5 removed XPathElementEvaluator.evaluate, which pyoai still calls
-    "lxml<5",
-]
+# Security floor for transitive dep of requests (CVE-2025-50181/50182)
+constraint-dependencies = ["urllib3>=2.5.0"]
