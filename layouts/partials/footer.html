@@ -6,28 +6,23 @@
   Policy / Web Accessibility / copyright links; those are now spelled out here,
   since nothing else provides them.
 
-  The footer-switches block is kept verbatim from Hextra: on documentation pages
-  the sidebar sets `enableFooterSwitches`, and that block is where the footer's
-  dark-mode toggle lives. Removing it would drop a theme control.
+  Hextra's footer-switches row is deliberately NOT rendered. It sat above the
+  footer on its own alignment, carrying a theme toggle and (on multilingual
+  sites) a language switch; this site is single-language, so it held only the
+  toggle. Dark mode still works -- Hextra sets `.dark` from the visitor's stored
+  or system preference and head-end.html mirrors that to `.dark-theme` -- but
+  there is no in-page control to override it. If one is wanted back, the right
+  home is the header utility row, which is where Hextra puts it by default
+  (a `type: theme-toggle` entry in the main menu).
 
   Colours are set in custom.css rather than with c-* utilities. The footer is a
   permanently dark surface in both themes, so it cannot ride the .dark-theme
   inversion -- under it, --black resolves to white and the text would vanish.
 */ -}}
-{{- $enableFooterSwitches := .Store.Get "enableFooterSwitches" | default false -}}
-{{- $displayThemeToggle := site.Params.theme.displayToggle | default true -}}
-{{- $footerSwitchesVisible := and $enableFooterSwitches (or hugo.IsMultilingual $displayThemeToggle) -}}
 
 <footer class="hextra-footer hx:print:bg-transparent">
-  {{- if $footerSwitchesVisible -}}
-    <div class="hx:mx-auto hx:flex hx:gap-2 hx:py-2 hx:px-4 hextra-max-footer-width">
-      {{- partial "language-switch.html" (dict "context" .) -}}
-      {{- with $displayThemeToggle }}{{ partial "theme-toggle.html" }}{{ end -}}
-    </div>
-  {{- end -}}
-
   <div class="umd-footer">
-    <div class="umd-footer__inner">
+    <div class="umd-footer__inner hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12">
       <div class="umd-footer__brand">
         {{- /* Dark-variant logo (light text) for legibility on the dark surface. */ -}}
         <a href="{{ .Site.Home.RelPermalink }}" aria-label="{{ .Site.Title }} — Home">
@@ -48,7 +43,7 @@
       </nav>
     </div>
 
-    <p class="umd-footer__copyright t-label">
+    <p class="umd-footer__copyright t-label hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12">
       &copy; {{ now.Year }} University of Maryland
     </p>
   </div>

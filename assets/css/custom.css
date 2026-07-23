@@ -39,6 +39,30 @@
   --primary-lightness: 45%;
 }
 
+/* ------------------------------------------------------------ shell grid -- */
+
+/*
+ * ONE horizontal grid for the whole brand shell.
+ *
+ * The shell used to carry its own gutter (`max-width: 90rem` +
+ * `clamp(1rem, 4vw, 2.5rem)`) -- a viewport-relative system, where Hextra lays
+ * its content out on a centred fixed max-width. The two agree at no viewport
+ * width. At 1440px that produced four different left edges on one page: 40
+ * (header/hero), 80 (footer switches), 336 (main), 384 (body text).
+ *
+ * The fix carries no values at all. Chrome containers wear Hextra's own layout
+ * classes in the markup:
+ *
+ *     hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12
+ *
+ * which is precisely what Hextra puts on <main>. Re-declaring the same widths
+ * and paddings in CSS here would be the same constants typed a second place to
+ * drift from; referencing the classes means the shell simply cannot disagree
+ * with the content column, at any breakpoint or `page.width` setting.
+ *
+ * Nothing to define here -- this comment marks where the grid comes from.
+ */
+
 /* ---------------------------------------------------------------- content -- */
 
 /* Body links. Both brand reds clear WCAG AA on white -- #E21833 is 4.76:1 and
@@ -79,9 +103,7 @@
   color: #ffffff;
 }
 .umd-utility-bar__inner {
-  max-width: 90rem;
-  margin-inline: auto;
-  padding: 0.4rem clamp(1rem, 4vw, 2.5rem);
+  padding-block: 0.4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -116,10 +138,6 @@
   border-bottom: 1px solid var(--light-gray, #e6e6e6);
 }
 .umd-header__inner {
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: var(--space-md, 1.5rem);
@@ -214,11 +232,7 @@
   padding-block: var(--space-2xl, 4rem);
   border-bottom: 1px solid var(--light-gray, #e6e6e6);
 }
-.umd-hero__inner {
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
-  box-sizing: border-box;
-}
+
 .umd-hero__eyebrow {
   color: var(--maryland-red, #e21833);
 }
@@ -283,10 +297,6 @@
   padding-block: var(--space-xl, 3rem) var(--space-md, 1.5rem);
 }
 .umd-footer__inner {
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
-  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xl, 3rem);
@@ -314,9 +324,6 @@
   text-decoration: underline;
 }
 .umd-footer__copyright {
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem);
   margin-block-start: var(--space-xl, 3rem);
   color: #e6e6e6;
 }
