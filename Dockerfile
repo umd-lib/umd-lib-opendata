@@ -32,5 +32,5 @@ ARG HUGO_BUILDOPTS
 
 RUN hugo build --minify --destination /build/html ${HUGO_BUILDOPTS}
 
-FROM nginx:1.20
+FROM nginx:1.30
 COPY --from=makehtml /build/html /usr/share/nginx/html
