@@ -1,14 +1,18 @@
 {{- /*
-  UMD Design System footer (Phase 2), overriding Hextra's theme footer.
+  UMD Libraries design system footer, overriding Hextra's theme footer.
 
-  The footer-switches block (language switch + dark-mode theme toggle) is kept
-  verbatim from the Hextra theme: on documentation pages the sidebar sets
-  `enableFooterSwitches`, and this block is where the footer's theme toggle
-  lives. Removing it would drop a dark-mode control, so it is preserved.
+  Plain markup on the Libraries theme's dark surface, replacing
+  <umd-element-footer type="simple">. The component supplied its own Privacy
+  Policy / Web Accessibility / copyright links; those are now spelled out here,
+  since nothing else provides them.
 
-  Hextra's gray footer body and "Powered by Hextra" credit are replaced with
-  <umd-element-footer type="simple">, mapping the site's policy/utility links
-  into its slots.
+  The footer-switches block is kept verbatim from Hextra: on documentation pages
+  the sidebar sets `enableFooterSwitches`, and that block is where the footer's
+  dark-mode toggle lives. Removing it would drop a theme control.
+
+  Colours are set in custom.css rather than with c-* utilities. The footer is a
+  permanently dark surface in both themes, so it cannot ride the .dark-theme
+  inversion -- under it, --black resolves to white and the text would vanish.
 */ -}}
 {{- $enableFooterSwitches := .Store.Get "enableFooterSwitches" | default false -}}
 {{- $displayThemeToggle := site.Params.theme.displayToggle | default true -}}
@@ -22,25 +26,30 @@
     </div>
   {{- end -}}
 
-  <umd-element-footer type="simple">
-    {{- /* The footer keeps a dark background, so use the dark-variant logo
-           (light text) for legibility in both light and dark site themes. */ -}}
-    <a slot="logo" href="{{ .Site.Home.RelPermalink }}" aria-label="{{ .Site.Title }} — Home">
-      <img src="{{ (.Site.Params.navbar.logo.dark | default .Site.Params.navbar.logo.path | default `images/logo.svg`) | relURL }}"
-        alt="University of Maryland Libraries Logo" width="200" height="60" />
-    </a>
+  <div class="umd-footer">
+    <div class="umd-footer__inner">
+      <div class="umd-footer__brand">
+        {{- /* Dark-variant logo (light text) for legibility on the dark surface. */ -}}
+        <a href="{{ .Site.Home.RelPermalink }}" aria-label="{{ .Site.Title }} — Home">
+          <img src="{{ (.Site.Params.navbar.logo.dark | default .Site.Params.navbar.logo.path | default `images/logo.svg`) | relURL }}"
+            alt="University of Maryland Libraries Logo" width="200" height="60" />
+        </a>
+        <p class="umd-footer__address t-body-small">
+          University of Maryland Libraries<br>
+          College Park, MD 20742
+        </p>
+      </div>
 
-    <p slot="contact-address">
-      University of Maryland Libraries<br>
-      College Park, MD 20742
-    </p>
-
-    {{- /* The component ships its own Privacy Policy, Web Accessibility, and
-           ©University of Maryland links; only add the site-specific ones here
-           to avoid duplicating them. */ -}}
-    <div slot="utility-links">
-      <a href="https://giving.umd.edu/giving/showSchool.php?name=libraries" target="_blank" rel="noopener noreferrer">Give Now</a>
-      <a href="{{ `/contact/` | relURL }}">Contact Us</a>
+      <nav class="umd-footer__links t-interactive" aria-label="Footer">
+        <a href="https://giving.umd.edu/giving/showSchool.php?name=libraries" target="_blank" rel="noopener noreferrer">Give Now</a>
+        <a href="{{ `/contact/` | relURL }}">Contact Us</a>
+        <a href="https://www.umd.edu/privacy-notice" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        <a href="https://www.umd.edu/web-accessibility" target="_blank" rel="noopener noreferrer">Web Accessibility</a>
+      </nav>
     </div>
-  </umd-element-footer>
+
+    <p class="umd-footer__copyright t-label">
+      &copy; {{ now.Year }} University of Maryland
+    </p>
+  </div>
 </footer>

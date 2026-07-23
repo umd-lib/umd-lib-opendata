@@ -1,26 +1,36 @@
 {{ define "main" }}
   {{- /*
-    UMD Design System home layout (Phase 3), overriding Hextra's home.html.
+    UMD Libraries design system home layout, overriding Hextra's home.html.
 
-    A full-width <umd-element-hero> is rendered above the standard Hextra
-    content column, driven by optional front-matter `hero.*` params. The hero's
-    headline carries the page <h1>, so Hextra's default title <h1> is dropped
-    here to avoid a duplicate top-level heading (accessibility: one h1 per page).
-    Everything below the hero is Hextra's unchanged content/sidebar/toc machinery.
+    A full-width hero sits above the standard Hextra content column, driven by
+    optional front-matter `hero.*` params. The hero headline carries the page
+    <h1>, so Hextra's default title <h1> is dropped here to avoid a second
+    top-level heading. Everything below the hero is Hextra's unchanged
+    content/sidebar/toc machinery.
+
+    Replaces <umd-element-hero> and <umd-element-call-to-action>. Those rendered
+    into Shadow DOM and hardcoded `:host { color: #000000 }` with no dark-theme
+    remap, which measured 1.11:1 against Hextra's dark background and had to be
+    corrected by injecting CSS into the shadow root. Here the colours come from
+    the theme's own tokens and follow .dark-theme without intervention.
+
+    The t- classes are applied to individual hero elements, never to a wrapper
+    around .Content: they are written as `.t-x, .t-x *` and would otherwise
+    restyle every element inside the rendered markdown.
   */ -}}
   {{- $hero := .Params.hero | default dict -}}
-  <umd-element-hero data-display="stacked">
-    {{- with $hero.eyebrow }}<p slot="eyebrow">{{ . }}</p>{{ end }}
-    <h1 slot="headline">{{ .Title }}</h1>
-    {{- with $hero.tagline }}<p slot="text">{{ . }}</p>{{ end }}
-    {{- with $hero.cta_url }}
-    <div slot="actions">
-      <umd-element-call-to-action data-display="primary">
-        <a href="{{ . | relURL }}">{{ $hero.cta_text | default "Learn more" }}</a>
-      </umd-element-call-to-action>
+  <section class="umd-hero c-bg-secondary">
+    <div class="umd-hero__inner s-page-lock">
+      {{- with $hero.eyebrow }}<p class="umd-hero__eyebrow t-eyebrow s-stack-small">{{ . }}</p>{{ end }}
+      <h1 class="umd-hero__headline t-display s-stack-medium">{{ .Title }}</h1>
+      {{- with $hero.tagline }}<p class="umd-hero__tagline t-body-large s-stack-medium">{{ . }}</p>{{ end }}
+      {{- with $hero.cta_url }}
+      <p class="umd-hero__actions">
+        <a class="umd-cta t-interactive" href="{{ . | relURL }}">{{ $hero.cta_text | default "Learn more" }}</a>
+      </p>
+      {{- end }}
     </div>
-    {{- end }}
-  </umd-element-hero>
+  </section>
 
   <div class='hx:mx-auto hx:flex hextra-max-page-width'>
     {{ partial "sidebar.html" (dict "context" . "disableSidebar" true "displayPlaceholder" true) }}
