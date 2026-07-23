@@ -16,9 +16,7 @@ RUN echo 'export PATH=$PATH:/root/go/bin' >>  /root/.bashrc
 WORKDIR /build
 
 COPY archetypes /build/archetypes
-COPY assets /tmp/assets
 COPY content /build/content
-COPY data /build/data
 COPY i18n /build/i18n
 COPY layouts /build/layouts
 COPY static /build/static
