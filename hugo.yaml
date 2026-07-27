@@ -59,7 +59,11 @@ params:
       height: 60
 
   footer:
-    displayCopyright: false
+    # true to match what the footer actually renders. The UMD footer supplies
+    # its own copyright line rather than Hextra's `copyright` string.
+    displayCopyright: true
+    # The UMD footer renders no "Powered by Hextra" credit, so this stays false
+    # and is consistent with the output.
     displayPoweredBy: false
 
   editURL:
