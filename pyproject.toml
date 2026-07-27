@@ -1,0 +1,22 @@
+[project]
+name = "umd-lib-opendata-examples"
+version = "0.1.0"
+description = "Dependencies for the Python code examples in static/code/"
+requires-python = ">=3.12"
+dependencies = [
+    # OAI-PMH protocol client for metadata harvesting
+    # (eth-library/oaipmh, the endorsed maintained fork of pyoai; same API)
+    "oaipmh>=3.2.0",
+    # RDF and JSON-LD processing for semantic data
+    "rdflib>=7.6.0",
+    # HTTP client for API requests (>=2.32.4 fixes CVE-2024-47081 .netrc leak)
+    "requests>=2.32.4",
+    # SRU (Search/Retrieve via URL) protocol client
+    "sru-queryer>=2.1.3",
+]
+
+[tool.uv]
+# Not an installable package; just a dependency environment for static/code/
+package = false
+# Security floor for transitive dep of requests (CVE-2025-50181/50182)
+constraint-dependencies = ["urllib3>=2.5.0"]
