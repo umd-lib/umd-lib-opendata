@@ -39,7 +39,7 @@ tasks:
     deploy:
         desc: "Builds and pushes the opendata-webhook image"
         cmds:
-            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata-webhook:{{.VERSION}} .
+            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata-webhook:{{.WEBHOOK_VERSION}} ./webhook
 
     test-python:
         desc: "Test all Python code examples in static/code/"
