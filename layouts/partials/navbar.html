@@ -82,6 +82,16 @@
         {{- else if .Params.icon -}}
           {{- $link := .URL -}}
           {{- $external := strings.HasPrefix $link "http" -}}
+          {{- /* Icon items may be configured with `pageRef` instead of `url`
+                 (the Atom Feed entry uses `pageRef: /index.xml`). Hugo leaves
+                 `.URL` empty for those, and an empty href just reloads the
+                 current page, so resolve the ref the same way the text nav
+                 above does. */ -}}
+          {{- with .PageRef -}}
+            {{- if hasPrefix . "/" -}}
+              {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+            {{- end -}}
+          {{- end -}}
           {{- $rel := cond (eq .Params.icon "mastodon") "noreferrer me" "noreferrer" -}}
           <a class="hx:p-2 hx:text-current" {{ if $external }}target="_blank" rel="{{ $rel }}"{{ end }} href="{{ $link }}" title="{{ or (T .Identifier) .Name | safeHTML }}">
             {{- partial "utils/icon.html" (dict "name" .Params.icon "attributes" (printf "height=%d" $iconHeight)) -}}
