@@ -298,11 +298,23 @@
 
 /* Permanently dark in both themes, so literal values throughout. Under
  * .dark-theme, var(--black) resolves to #ffffff and a token-driven background
- * would turn the footer white with white text. */
-.umd-footer {
+ * would turn the footer white with white text.
+ *
+ * The surface is set on Hextra's own .hextra-footer rather than on a wrapper of
+ * ours: that is the full-width outer element, so the colour reaches the viewport
+ * edges while the content inside stays within .hextra-max-footer-width. This
+ * overrides the theme's hx:bg-gray-100 / hx:dark:bg-neutral-900 -- those are
+ * Tailwind utilities in a cascade layer, and unlayered rules like this one win
+ * over layered ones regardless of source order. */
+.hextra-footer {
   background: #242424;
   color: #ffffff;
   padding-block: var(--space-xl, 3rem) var(--space-md, 1.5rem);
+}
+/* The theme sets a light-surface text colour on the hook wrapper; on our dark
+ * surface it has to be inverted. */
+.hextra-custom-footer {
+  color: #ffffff;
 }
 .umd-footer__inner {
   display: flex;
