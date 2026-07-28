@@ -47,8 +47,21 @@ menu:
       pageRef: "/index.xml"
       params:
         icon: rss
+    - name: Theme
+      weight: 12
+      params:
+        type: theme-toggle
 
 params:
+  theme:
+    # Suppresses Hextra's two default homes for the theme control: the footer
+    # switches row (which renders above a light divider on this permanently dark
+    # footer, and only on pages without a sidebar) and the sidebar copy. The
+    # header utility row carries it instead, via the `type: theme-toggle` menu
+    # entry above, so there is exactly one control and it is present at every
+    # breakpoint.
+    displayToggle: false
+
   navbar:
     displayTitle: true
     displayLogo: true
@@ -59,6 +72,11 @@ params:
       height: 60
 
   footer:
+    # Both govern Hextra's own copyright block, which is switched off here: it
+    # renders a fixed translation string and so cannot carry the current year.
+    # The copyright line comes from layouts/partials/custom/footer.html instead
+    # and updates itself. Setting either true would render a second, redundant
+    # block beneath ours.
     displayCopyright: false
     displayPoweredBy: false
 

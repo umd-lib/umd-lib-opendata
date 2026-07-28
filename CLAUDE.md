@@ -105,6 +105,53 @@ The Hugo site content is organized as follows:
 
 * **`layouts/_shortcodes/code.html`** - Custom shortcode for embedding Python code files directly into content with syntax highlighting and copy button
 
+### Editing Design System Content and Brand
+
+The brand shell is built on the UMD Libraries Drupal theme,
+`umd-lib/umdlib-design-system-theme` (machine name `umdlib_umdds`), not on the
+central `@universityofmaryland` web components. Its CSS is fetched at build time
+in `layouts/partials/custom/head-end.html` and inlined as a fingerprinted,
+SRI-hashed stylesheet, so nothing is vendored here and the visitor's browser
+loads nothing from a third party.
+
+Where things are edited:
+
+* **Hero** - front-matter `hero.*` in `content/_index.md`; markup in
+  `layouts/home.html`
+* **Cards** - the overridden shortcode `layouts/_shortcodes/card.html`;
+  authored as normal `{{< card >}}` in content
+* **Brand color / type** - `--primary-*` (Hextra's accent) in
+  `assets/css/custom.css`; everything else uses the Libraries theme's own
+  tokens (`--maryland-red`, `--space-*`, the gray ramp)
+* **Card-portal landings** (sidebar hidden, card grid as the only navigation) -
+  `portal: true` front matter, handled by `layouts/list.html`
+* **Which upstream ref we pin** - the single `$dsRef` line in `head-end.html`
+
+Three things to know before editing:
+
+1. **The token layer is a semantic inversion, not a palette swap.** Under
+   `.dark-theme`, `--white` becomes `#000000`, `--black` becomes `#ffffff`,
+   `--maryland-red` becomes the brand yellow, and the gray ramp reverses. So
+   `var(--white)` is not "white". Surfaces that must keep a fixed appearance in
+   both themes - the red university strip, the dark footer, the Give Now button
+   - use literal values on purpose; a token there would invert underneath its own
+   text. Hextra toggles `.dark`, and a small script in `head-end.html` mirrors
+   that onto `.dark-theme`.
+
+2. **Never put a `t-*` class on a wrapper around page content.** They are written
+   `.t-x, .t-x *`, so a `t-` class on a content region restyles every element
+   Goldmark emits inside it. Apply them to individual chrome elements only.
+
+3. **`css/base.css` is deliberately not fetched.** It carries a Tailwind v3-era
+   preflight and Hextra already compiles its own Tailwind v4 preflight; taking
+   both puts two generations of reset in one cascade.
+
+The font layer is subset at build time: `css/fonts.css` upstream is 739 KB of
+base64 TTF/OTF across twelve faces, only three of which any rule we consume
+names. `head-end.html` extracts those three and adds `font-display: swap`. If
+upstream re-cuts or renames a face, the build fails with a named error rather
+than silently falling back to a system font.
+
 ### Python Code Examples
 
 The `static/code/` directory contains working Python examples for:

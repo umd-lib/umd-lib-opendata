@@ -1,0 +1,349 @@
+/*
+ * UMD Libraries design system alignment.
+ *
+ * Loaded via Hextra's assets/css/custom.css hook, which the theme concatenates
+ * AFTER its own compiled CSS, so these rules win.
+ *
+ * Values come from umdlib_umdds tokens (css/tokens.css, fetched in head-end.html)
+ * rather than being hand-picked, so they track the Libraries theme. The previous
+ * --umd-* names came from the central @universityofmaryland style library and no
+ * longer exist; everything here uses the Libraries token names.
+ *
+ * TOKEN INVERSION -- read before adding rules.
+ *
+ * .dark-theme (mirrored onto <html> from Hextra's .dark) is a semantic inversion,
+ * not a palette swap:
+ *
+ *     --white         #ffffff -> #000000
+ *     --black         #000000 -> #ffffff
+ *     --maryland-red  #e21833 -> #ffd200   (the brand yellow)
+ *     --maryland-yellow #ffd200 -> #e21833
+ *     the six grays reverse end to end
+ *
+ * So var(--white) is NOT "white". A surface that must keep a fixed appearance in
+ * both themes -- the red university strip, the dark footer -- has to use literal
+ * values; a token would invert underneath its own text. Surfaces that should
+ * follow the theme use tokens and need no dark-mode rule at all.
+ *
+ * --dark-red and --maryland-yellow are not remapped, so they keep their light
+ * values in dark mode.
+ */
+
+/* Retune Hextra's primary accent (links, active nav, focus rings, selection)
+ * to UMD red. Hextra derives its accent from these HSL parts; 351deg/78%/45%
+ * is UMD red shifted slightly darker so text-sized uses keep adequate
+ * contrast. #E21833 = hsl(351 78% 49%). */
+:root {
+  --primary-hue: 351deg;
+  --primary-saturation: 78%;
+  --primary-lightness: 45%;
+}
+
+/* ------------------------------------------------------------ shell grid -- */
+
+/*
+ * ONE horizontal grid for the whole brand shell.
+ *
+ * The shell used to carry its own gutter (`max-width: 90rem` +
+ * `clamp(1rem, 4vw, 2.5rem)`) -- a viewport-relative system, where Hextra lays
+ * its content out on a centred fixed max-width. The two agree at no viewport
+ * width. At 1440px that produced four different left edges on one page: 40
+ * (header/hero), 80 (footer switches), 336 (main), 384 (body text).
+ *
+ * The fix carries no values at all. Chrome containers wear Hextra's own layout
+ * classes in the markup:
+ *
+ *     hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12
+ *
+ * which is precisely what Hextra puts on <main>. Re-declaring the same widths
+ * and paddings in CSS here would be the same constants typed a second place to
+ * drift from; referencing the classes means the shell simply cannot disagree
+ * with the content column, at any breakpoint or `page.width` setting.
+ *
+ * Nothing to define here -- this comment marks where the grid comes from.
+ */
+
+/* ---------------------------------------------------------------- content -- */
+
+/* Body links. Both brand reds clear WCAG AA on white -- #E21833 is 4.76:1 and
+ * #A90007 is 7.81:1 -- so pinning to the darker one is a headroom choice, not a
+ * compliance fix.
+ *
+ * On dark backgrounds neither red holds: #E21833 on Hextra's #111111 is 3.97:1,
+ * under the 4.5 floor, and #A90007 is 2.42:1. The theme's own answer is to remap
+ * --maryland-red to the brand yellow under .dark-theme, so naming that token in
+ * the dark rule yields #ffd200 at 13.01:1. */
+.content a {
+  color: var(--dark-red, #a90007);
+}
+.dark .content a {
+  color: var(--maryland-red, #ffd200);
+}
+
+/* Align content headings to the brand sans. Set as a plain font-family rather
+ * than with the theme's t-* classes: those are written `.t-x, .t-x *` and would
+ * restyle every element Goldmark nests inside a heading. Body copy stays on
+ * Hextra's stack for reading comfort. */
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  font-family: "Interstate", Helvetica, Arial, Verdana, sans-serif;
+}
+
+/* ------------------------------------------------------------ utility bar -- */
+
+/* The "University of Maryland" strip. Fixed red with white text in both themes,
+ * so literal values: var(--maryland-red) would become yellow under .dark-theme
+ * and leave white text on yellow. White on #E21833 is 4.7:1, passing AA. */
+.umd-utility-bar {
+  background: #e21833;
+  color: #ffffff;
+}
+.umd-utility-bar__inner {
+  padding-block: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: "Interstate", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.umd-utility-bar a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.umd-utility-bar a:hover {
+  text-decoration: underline;
+}
+.umd-utility-bar__nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
+/* ----------------------------------------------------------------- header -- */
+
+/* The header follows the theme: token-driven surface, so it inverts with
+ * .dark-theme and needs no dark-mode rule. Gutters and the search-dropdown
+ * stacking order are ordinary CSS now -- under the web component both had to be
+ * injected into a shadow root because the component laid its content out
+ * full-bleed and painted its nav row above its search row. */
+.umd-header {
+  background: var(--white, #ffffff);
+  border-bottom: 1px solid var(--light-gray, #e6e6e6);
+}
+.umd-header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md, 1.5rem);
+  min-height: 4rem;
+}
+.umd-header__logo {
+  display: block;
+  flex: 0 0 auto;
+}
+.umd-header__logo img {
+  display: block;
+  height: auto;
+  max-width: 12rem;
+}
+
+/* Logo swap. The header background is var(--white), which .dark-theme inverts to
+ * #000000, so the default dark-wordmark logo would disappear. Swap to the light
+ * variant instead of pinning the header surface: the header should follow the
+ * theme like every other token-driven surface.
+ *
+ * Both selectors are qualified by the parent class deliberately. A bare
+ * `.umd-header__logo-dark` is (0,1,0) and loses to `.umd-header__logo img` at
+ * (0,1,1) above, which renders BOTH logos stacked. Two classes beats one class
+ * plus one element. */
+.umd-header__logo .umd-header__logo-dark {
+  display: none;
+}
+.dark .umd-header__logo .umd-header__logo-light {
+  display: none;
+}
+.dark .umd-header__logo .umd-header__logo-dark {
+  display: block;
+}
+.umd-header__nav {
+  display: none;
+  align-items: center;
+  gap: var(--space-md, 1.5rem);
+  margin-inline-start: var(--space-sm, 1rem);
+}
+@media (min-width: 768px) {
+  .umd-header__nav {
+    display: flex;
+  }
+}
+.umd-header__nav-link {
+  color: var(--black, #000000);
+  text-decoration: none;
+  padding-block: 0.25rem;
+  border-bottom: 2px solid transparent;
+}
+.umd-header__nav-link:hover {
+  border-bottom-color: var(--maryland-red, #e21833);
+}
+/* Current section. Styled off aria-current so the attribute that carries the
+ * meaning to assistive tech is the same one that draws the underline -- there
+ * is no way to have one without the other. Weight as well as colour, so the
+ * indication does not rest on colour alone (WCAG 1.4.1). */
+.umd-header__nav-link[aria-current="page"] {
+  border-bottom-color: var(--maryland-red, #e21833);
+  font-weight: 700;
+}
+
+/* Utility row sits last and takes the remaining space, so the search field and
+ * icons align right. Raised above the nav row so the FlexSearch results panel
+ * overlays the page rather than being covered. */
+.umd-header__utility {
+  margin-inline-start: auto;
+  position: relative;
+  z-index: 2;
+}
+.umd-header__nav {
+  position: relative;
+  z-index: 1;
+}
+
+/* Give Now. Fixed red with white text for the same reason as the utility bar. */
+.umd-header__cta {
+  display: none;
+  background: #e21833;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem var(--space-sm, 1rem);
+  white-space: nowrap;
+}
+.umd-header__cta:hover {
+  background: #a90007;
+}
+@media (min-width: 768px) {
+  .umd-header__cta {
+    display: inline-block;
+  }
+}
+
+/* ------------------------------------------------------------------- hero -- */
+
+/* Token-driven, so it inverts with the theme. c-bg-secondary on the element
+ * supplies --lightest-gray; these rules only handle layout. */
+.umd-hero {
+  width: 100%;
+  padding-block: var(--space-2xl, 4rem);
+  border-bottom: 1px solid var(--light-gray, #e6e6e6);
+}
+
+.umd-hero__eyebrow {
+  color: var(--maryland-red, #e21833);
+}
+.umd-hero__headline {
+  /* .t-display supplies Barlow Condensed 700 italic at 3rem. */
+  color: var(--black, #000000);
+  text-transform: uppercase;
+  max-width: 20ch;
+}
+.umd-hero__tagline {
+  color: var(--dark-gray, #454545);
+  max-width: 60ch;
+}
+.umd-hero__actions {
+  margin-block-start: var(--space-lg, 2rem);
+}
+
+/* Call to action, replacing <umd-element-call-to-action>. Fixed red so it stays
+ * a brand button in both themes. */
+.umd-cta {
+  display: inline-block;
+  background: #e21833;
+  color: #ffffff;
+  text-decoration: none;
+  padding: var(--space-xs, 0.5rem) var(--space-md, 1.5rem);
+}
+.umd-cta:hover {
+  background: #a90007;
+}
+
+/* ------------------------------------------------------------------- card -- */
+
+/* Token-driven surface and border, so cards invert with the theme. */
+.umd-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 0.5rem);
+  height: 100%;
+  box-sizing: border-box;
+}
+.umd-card__headline {
+  color: var(--black, #000000);
+  text-decoration: none;
+}
+.umd-card__headline:hover {
+  color: var(--maryland-red, #e21833);
+  text-decoration: underline;
+}
+.umd-card__text {
+  color: var(--dark-gray, #454545);
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------- footer -- */
+
+/* Permanently dark in both themes, so literal values throughout. Under
+ * .dark-theme, var(--black) resolves to #ffffff and a token-driven background
+ * would turn the footer white with white text.
+ *
+ * The surface is set on Hextra's own .hextra-footer rather than on a wrapper of
+ * ours: that is the full-width outer element, so the colour reaches the viewport
+ * edges while the content inside stays within .hextra-max-footer-width. This
+ * overrides the theme's hx:bg-gray-100 / hx:dark:bg-neutral-900 -- those are
+ * Tailwind utilities in a cascade layer, and unlayered rules like this one win
+ * over layered ones regardless of source order. */
+.hextra-footer {
+  background: #242424;
+  color: #ffffff;
+  padding-block: var(--space-xl, 3rem) var(--space-md, 1.5rem);
+}
+/* The theme sets a light-surface text colour on the hook wrapper; on our dark
+ * surface it has to be inverted. */
+.hextra-custom-footer {
+  color: #ffffff;
+}
+.umd-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xl, 3rem);
+  justify-content: space-between;
+}
+.umd-footer__brand img {
+  display: block;
+  height: auto;
+  max-width: 12rem;
+}
+.umd-footer__address {
+  color: #f1f1f1;
+  margin-block-start: var(--space-sm, 1rem);
+}
+.umd-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 0.5rem);
+}
+.umd-footer__links a {
+  color: #ffffff;
+  text-decoration: none;
+}
+.umd-footer__links a:hover {
+  text-decoration: underline;
+}
+.umd-footer__copyright {
+  margin-block-start: var(--space-xl, 3rem);
+  color: #e6e6e6;
+}

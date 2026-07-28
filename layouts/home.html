@@ -1,0 +1,52 @@
+{{ define "main" }}
+  {{- /*
+    UMD Libraries design system home layout, overriding Hextra's home.html.
+
+    A full-width hero sits above the standard Hextra content column, driven by
+    optional front-matter `hero.*` params. The hero headline carries the page
+    <h1>, so Hextra's default title <h1> is dropped here to avoid a second
+    top-level heading. Everything below the hero is Hextra's unchanged
+    content/sidebar/toc machinery.
+
+    Replaces <umd-element-hero> and <umd-element-call-to-action>. Those rendered
+    into Shadow DOM and hardcoded `:host { color: #000000 }` with no dark-theme
+    remap, which measured 1.11:1 against Hextra's dark background and had to be
+    corrected by injecting CSS into the shadow root. Here the colours come from
+    the theme's own tokens and follow .dark-theme without intervention.
+
+    The t- classes are applied to individual hero elements, never to a wrapper
+    around .Content: they are written as `.t-x, .t-x *` and would otherwise
+    restyle every element inside the rendered markdown.
+  */ -}}
+  {{- $hero := .Params.hero | default dict -}}
+  <section class="umd-hero c-bg-secondary">
+    <div class="umd-hero__inner hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12">
+      {{- with $hero.eyebrow }}<p class="umd-hero__eyebrow t-eyebrow s-stack-small">{{ . }}</p>{{ end }}
+      <h1 class="umd-hero__headline t-display s-stack-medium">{{ .Title }}</h1>
+      {{- with $hero.tagline }}<p class="umd-hero__tagline t-body-large s-stack-medium">{{ . }}</p>{{ end }}
+      {{- with $hero.cta_url }}
+      <p class="umd-hero__actions">
+        <a class="umd-cta t-interactive" href="{{ . | relURL }}">{{ $hero.cta_text | default "Learn more" }}</a>
+      </p>
+      {{- end }}
+    </div>
+  </section>
+
+  {{- /* No sidebar placeholder on the home page. The sidebar is disabled here,
+         and the placeholder reserves its full column width anyway -- which is
+         what pushed the body copy 256px to the right of the hero above it.
+         Dropping it puts <main> against the page container, the same edge the
+         shell containers use, so the hero headline and the first paragraph
+         share a left edge. */ -}}
+  <div class='hx:mx-auto hx:flex hextra-max-page-width'>
+    {{ partial "sidebar.html" (dict "context" . "disableSidebar" true "displayPlaceholder" false) }}
+    {{ partial "toc.html" . }}
+    <article class="hx:w-full hx:break-words hx:flex hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
+      <main id="content" class="hx:w-full hx:min-w-0 hextra-max-content-width hx:px-6 hx:pt-4 hx:md:px-12">
+        <div class="content">
+          {{ .Content }}
+        </div>
+      </main>
+    </article>
+  </div>
+{{ end }}

@@ -1,0 +1,28 @@
+{{- /*
+  UMD Libraries design system card, overriding Hextra's card shortcode.
+
+  Renders each {{< card >}} as a bordered card with a linked headline, so the
+  home "Explore" grid and the Services landing align with the design system
+  without changing any content. Hextra's `cards` grid wrapper (.hextra-cards)
+  still lays them out in columns.
+
+  Replaces <umd-element-card>, which rendered into Shadow DOM and needed the same
+  injected dark-theme colour correction as the hero.
+
+  Supported params (compatible subset of Hextra's card): link, title, subtitle.
+  The `icon` param is intentionally ignored: this is a headline/text card and
+  does not take Hextra's named nav icons.
+*/ -}}
+{{- $link := .Get "link" -}}
+{{- $title := .Get "title" -}}
+{{- $subtitle := .Get "subtitle" -}}
+{{- /* Match Hextra's link resolution: root-absolute links (leading "/") get
+       relURL; relative links (e.g. "archival-collections") pass through raw so
+       the browser resolves them against the CURRENT page. Running relURL on a
+       relative link would root it at the site root (/archival-collections/ 404
+       instead of /services/archival-collections/). */ -}}
+{{- $href := cond (strings.HasPrefix $link "/") ($link | relURL) $link -}}
+<div class="umd-card c-bg-primary c-border-secondary s-box-medium-v s-box-medium-h">
+  <a class="umd-card__headline t-title-medium" href="{{ $href }}">{{ $title }}</a>
+  {{- with $subtitle }}<p class="umd-card__text t-body-small">{{ . }}</p>{{ end }}
+</div>
