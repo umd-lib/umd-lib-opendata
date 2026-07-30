@@ -1,3 +1,183 @@
+  {{- /*
+    UMD Libraries design system assets.
+
+    Source of truth is the Libraries Drupal theme, umd-lib/umdlib-design-system-theme
+    (machine name umdlib_umdds). We fetch its CSS at build time and Hugo inlines
+    a fingerprinted, SRI-hashed copy into our own output, so nothing is vendored
+    into this repo and nothing is fetched by the visitor's browser from a third
+    party at runtime.
+
+    We take three of the theme's four CSS layers:
+
+      css/tokens.css     -- :root custom properties and the .dark-theme remap
+      css/utilities.css  -- the t-/c-/s-/ani-/i-/l-/d- semantic utility classes
+      css/fonts.css      -- @font-face blocks, SUBSET at build time (see below)
+
+    We deliberately do NOT take css/base.css. It carries a Tailwind v3-era
+    preflight (its first 384 lines), and Hextra already compiles its own
+    Tailwind v4 preflight -- two generations of reset in one cascade. The rest of
+    base.css is Drupal-authored element styling that would contend with Hextra's
+    typography.css.
+  */ -}}
+  {{- /*
+    Pinned to the 4.0.1 tag, the first release containing the LIBWEB-6781 layer
+    split. To move to a later release, change this line and nothing else.
+  */ -}}
+  {{- $dsRef := "4.0.1" -}}
+  {{- $dsBase := printf "https://raw.githubusercontent.com/umd-lib/umdlib-design-system-theme/%s/css" $dsRef -}}
+
+  {{- /*
+    Each layer is fetched inline and kept as a *resource*, not passed through a
+    partial. A partial renders through the HTML template engine, which escapes
+    its output -- `font-family: "Interstate"` comes back as `font-family:
+    &#34;Interstate&#34;`, which then matches nothing and ships broken CSS.
+
+    Fetch failures fail the build. A remote fetch is the one part of this build
+    that can break for reasons outside the repo -- network, a GitHub outage, a ref
+    that stops existing -- and silently rendering an unstyled site is worse than a
+    failed build.
+
+    Note `try`: Resource.Err was removed in Hugo v0.141.0 and replaced by the try
+    keyword, so the `{{ with resources.GetRemote }}{{ with .Err }}` idiom in most
+    examples is a hard build error on current Hugo.
+  */ -}}
+  {{- $tokensRes := false -}}
+  {{- $utilitiesRes := false -}}
+  {{- $fontsRes := false -}}
+  {{- with try (resources.GetRemote (printf "%s/tokens.css" $dsBase)) -}}
+    {{- with .Err }}{{ errorf "design system tokens.css fetch failed: %s" . }}
+    {{- else with .Value }}{{ $tokensRes = . }}
+    {{- else }}{{ errorf "design system tokens.css returned no resource" }}{{ end -}}
+  {{- end -}}
+  {{- with try (resources.GetRemote (printf "%s/utilities.css" $dsBase)) -}}
+    {{- with .Err }}{{ errorf "design system utilities.css fetch failed: %s" . }}
+    {{- else with .Value }}{{ $utilitiesRes = . }}
+    {{- else }}{{ errorf "design system utilities.css returned no resource" }}{{ end -}}
+  {{- end -}}
+  {{- with try (resources.GetRemote (printf "%s/fonts.css" $dsBase)) -}}
+    {{- with .Err }}{{ errorf "design system fonts.css fetch failed: %s" . }}
+    {{- else with .Value }}{{ $fontsRes = . }}
+    {{- else }}{{ errorf "design system fonts.css returned no resource" }}{{ end -}}
+  {{- end -}}
+
+  {{- /*
+    Font subsetting.
+
+    css/fonts.css is 739 KB: twelve faces as base64-embedded TTF/OTF. Only three
+    of them are reachable from the CSS we consume -- measured by parsing every
+    font-family/weight/style declaration in tokens.css, utilities.css and
+    base.css. The other nine (both Crimson Pro faces, which no rule in the theme
+    names at all, plus five unused Interstate weights and two Interstate italics
+    we have no rule for) are 529 KB we would ship for nothing.
+
+    So we extract the three faces we use rather than taking the file whole. This
+    is derived at build time from upstream, not a vendored copy, so it cannot
+    drift -- and if upstream renames or re-cuts a face the build fails loudly
+    below rather than silently falling back to a system font.
+
+    We also add `font-display: swap`. Upstream sets no font-display at all, which
+    means the browser default `auto` -- text stays invisible for up to ~3s on a
+    cold load.
+  */ -}}
+  {{- $wantedFaces := slice
+        (dict "family" "Barlow Condensed" "weight" "700" "style" "italic" "used" "t-display (hero headline)")
+        (dict "family" "Interstate" "weight" "400 500" "style" "normal" "used" "t-body-*, t-label")
+        (dict "family" "Interstate" "weight" "600 700" "style" "normal" "used" "t-headline, t-title-*, t-eyebrow, t-interactive")
+  -}}
+  {{- $allFaces := findRE `@font-face \{[^{}]*\}` $fontsRes.Content -}}
+  {{- $keptFaces := slice -}}
+  {{- range $want := $wantedFaces -}}
+    {{- $found := "" -}}
+    {{- range $face := $allFaces -}}
+      {{- if and
+            (in $face (printf `font-family: "%s";` $want.family))
+            (and (in $face (printf "font-weight: %s;" $want.weight))
+                 (in $face (printf "font-style: %s;" $want.style))) -}}
+        {{- $found = $face -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if eq $found "" -}}
+      {{- errorf "design system font face not found upstream: %s %s %s (needed for %s). css/fonts.css may have been re-cut; check the ref %s" $want.family $want.weight $want.style $want.used $dsRef -}}
+    {{- else -}}
+      {{- $keptFaces = $keptFaces | append (printf "%s\n  font-display: swap;\n}" (strings.TrimSuffix "}" (strings.TrimSpace $found))) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $fontsSubset := resources.FromString "css/umdlib-fonts-subset.css" (delimit $keptFaces "\n\n") -}}
+
+  {{- /* Concatenated as resources rather than strings. Order matters only for
+         readability -- custom properties resolve at use time regardless of
+         declaration order. Faces first, so they are registered before the rules
+         that name them. */ -}}
+  {{- $ds := resources.Concat "css/umdlib-design-system.css" (slice $fontsSubset $tokensRes $utilitiesRes) -}}
+  {{- with $ds | minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}">
+  {{- end -}}
+
+  {{- /*
+    Dark-mode bridge.
+
+    Hextra toggles a `dark` class on <html>. umdlib_umdds keys its dark values off
+    `.dark-theme` (tokens.css), which is a semantic inversion rather than a
+    palette swap: --white becomes #000000, --black becomes #ffffff, --maryland-red
+    becomes the brand yellow, and the gray ramp reverses end to end.
+
+    Mirroring the class is all that is required -- every consuming rule reads the
+    custom properties, so the whole utility layer follows. We do NOT use the
+    theme's own `c-*-dark-*` classes, which express a different idea ("a dark band
+    on a light page") and would fight the inversion if combined with it.
+
+    The observer converges: setting `dark-theme` to a value it already has writes
+    no attribute and so fires no further mutation.
+  */ -}}
+  <script>
+    (function () {
+      var root = document.documentElement;
+      function sync() {
+        root.classList.toggle('dark-theme', root.classList.contains('dark'));
+      }
+      new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+      sync();
+    })();
+  </script>
+  {{- /*
+    Accessibility fix for Hextra's FlexSearch results. When a result carries a
+    section prefix, Hextra appends a bare <div class="hextra-search-prefix">
+    directly into the results <ul>, which violates WCAG 1.3.1 (a <ul> may only
+    directly contain <li>). Wrap those prefix divs in <li> as results render,
+    keeping the section headers in the a11y tree and the list valid. This is a
+    pre-existing theme issue, fixed here without forking Hextra's search script.
+    Retire this if Hextra fixes it upstream.
+  */ -}}
+  <script>
+    (function () {
+      function wrapPrefixes(ul) {
+        ul.querySelectorAll(':scope > .hextra-search-prefix').forEach(function (div) {
+          var li = document.createElement('li');
+          li.className = 'hextra-search-prefix-item';
+          div.parentNode.insertBefore(li, div);
+          li.appendChild(div);
+        });
+      }
+      function attach() {
+        var ul = document.querySelector('.hextra-search-results');
+        if (!ul || ul.dataset.umdWrapAttached) { return !!ul; }
+        ul.dataset.umdWrapAttached = '1';
+        var obs = new MutationObserver(function () {
+          obs.disconnect();
+          wrapPrefixes(ul);
+          obs.observe(ul, { childList: true });
+        });
+        obs.observe(ul, { childList: true });
+        wrapPrefixes(ul);
+        return true;
+      }
+      if (!attach()) {
+        var n = 0, iv = setInterval(function () { if (attach() || ++n > 60) clearInterval(iv); }, 100);
+      }
+    })();
+  </script>
+  <!-- End UMD Libraries design system assets -->
+
   <!-- Matomo -->
   <script>
     var _paq = window._paq = window._paq || [];

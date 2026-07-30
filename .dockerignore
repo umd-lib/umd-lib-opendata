@@ -1,0 +1,38 @@
+# Subtracted from "COPY . /build/". Denylist on purpose: a new Hugo input
+# directory works without anyone remembering to edit this file.
+#
+# "*" does not cross "/", so "*.md" matches README.md but not content/**/*.md.
+
+.git
+.gitignore
+.gitmodules
+.dockerignore
+Dockerfile
+
+# public/ especially: otherwise a local build gets copied in and served in
+# place of the one built here.
+public/
+resources/
+.hugo_build.lock
+build/
+
+.vscode/
+.claude/
+.agents/
+skills-lock.json
+
+# Repo-level Python harness only. The examples in static/code/ are published
+# by the site and must be copied.
+.venv/
+.python-version
+pyproject.toml
+uv.lock
+tox.ini
+test_python_examples.py
+__pycache__/
+
+# Harvested DRUM metadata and bitstreams. Working data, never part of the site.
+harvest/
+
+*.md
+LICENSE

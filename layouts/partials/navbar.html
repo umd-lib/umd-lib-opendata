@@ -1,59 +1,143 @@
-{{- $navWidth := "hx:max-w-[90rem]" -}}
-{{- with .Site.Params.navbar.width -}}
-  {{ if eq . "normal" -}}
-    {{ $navWidth = "hx:max-w-screen-xl" -}}
-  {{ else if eq . "full" -}}
-    {{ $navWidth = "max-w-full" -}}
-  {{ end -}}
-{{- end -}}
+{{- /*
+  UMD Libraries design system header, replacing Hextra's default top navbar.
 
-{{- $page := . -}}
+  Built from plain markup plus the Libraries theme's own utility classes
+  (t-/c-/s-/i-), not from <umd-element-*> web components. The components render
+  into Shadow DOM, which meant light-DOM CSS could not reach their internals and
+  layout/contrast corrections had to be injected as stylesheets into each shadow
+  root. That patch table is gone: everything here is ordinary CSS in one cascade.
+
+  Hextra machinery this must preserve:
+
+    * The FlexSearch widget, rendered by the theme's own search.html partial. Its
+      script binds to `.hextra-search-input`, so the partial is included as-is.
+    * The `.hextra-hamburger-menu` button, which toggles the docs sidebar on
+      mobile. Hextra's JS binds by class.
+    * The `.hextra-nav-container` wrapper, targeted by Hextra scroll behaviour.
+
+  Utility classes are applied only to chrome, never to a wrapper around page
+  content: the theme's typography classes are written as `.t-x, .t-x *`, so a
+  `t-` class on a content region would restyle every element Goldmark emits
+  inside it.
+*/ -}}
+
+{{- $currentPage := . -}}
 {{- $iconHeight := 24 -}}
+{{- $logoPath := .Site.Params.navbar.logo.path | default "images/logo.svg" -}}
+{{- $logoDarkPath := .Site.Params.navbar.logo.dark | default $logoPath -}}
+{{- $logoWidth := .Site.Params.navbar.logo.width | default "200" -}}
+{{- $logoHeight := .Site.Params.navbar.logo.height | default "60" -}}
+{{- $logoLink := .Site.Params.navbar.logo.link | default .Site.Home.RelPermalink -}}
 
-<div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:bg-transparent hx:print:hidden">
-  <div
-    class="hextra-nav-container-blur hx:pointer-events-none hx:absolute hx:z-[-1] hx:h-full hx:w-full hx:bg-white hx:dark:bg-dark hx:shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)] hx:contrast-more:shadow-[0_0_0_1px_#000] hx:dark:shadow-[0_-1px_0_rgba(255,255,255,.1)_inset] hx:contrast-more:dark:shadow-[0_0_0_1px_#fff]"
-  ></div>
+{{- /* UMD red utility strip. Colours are set explicitly in custom.css rather
+       than with c-* utility classes: this band must stay red with white text in
+       both themes, but .dark-theme remaps --maryland-red to the brand yellow,
+       so a token-driven background would invert underneath the white text. */ -}}
+<div class="umd-utility-bar">
+  <div class="umd-utility-bar__inner hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12">
+    <a class="umd-utility-bar__brand" href="https://umd.edu" target="_blank" rel="noopener noreferrer">University of Maryland</a>
+    <nav class="umd-utility-bar__nav" aria-label="University">
+      <a href="https://www.lib.umd.edu/" target="_blank" rel="noopener noreferrer">Libraries Home</a>
+    </nav>
+  </div>
+</div>
 
-  <nav class="hextra-max-navbar-width hx:mx-auto hx:flex hx:items-center hx:justify-end hx:gap-2 hx:h-16 hx:px-6">
-    {{ partial "navbar-title.html" . }}
+<div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:print:hidden umd-header">
+  <div class="umd-header__inner hextra-max-page-width hx:mx-auto hx:px-6 hx:md:px-12">
 
-    {{- $currentPage := . -}}
-    {{- range .Site.Menus.main -}}
-      {{- if eq .Params.type "search" -}}
-        {{- partial "search.html" (dict "params" .Params) -}}
-      {{- else -}}
-        {{- $link := .URL -}}
-        {{- $external := strings.HasPrefix $link "http" -}}
-        {{- with .PageRef -}}
-          {{- if hasPrefix . "/" -}}
-            {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+    {{- /* Brand / logo. Both variants are rendered and swapped in CSS.
+           The header surface is var(--white), which .dark-theme inverts to
+           #000000 -- so the default logo (dark wordmark) becomes invisible in
+           dark mode and the light variant has to take over. Only one is ever
+           visible, and the hidden one carries empty alt so it is not announced
+           twice. */ -}}
+    <a class="umd-header__logo" href="{{ $logoLink }}" aria-label="{{ .Site.Title }} — Home">
+      <img class="umd-header__logo-light" src="{{ $logoPath | relURL }}"
+        alt="University of Maryland Libraries Logo" width="{{ $logoWidth }}" height="{{ $logoHeight }}" />
+      <img class="umd-header__logo-dark" src="{{ $logoDarkPath | relURL }}"
+        alt="" aria-hidden="true" width="{{ $logoWidth }}" height="{{ $logoHeight }}" />
+    </a>
+
+    {{- /* Primary navigation. Text menu items only; search and icon-only items
+           are handled in the utility row below. */ -}}
+    <nav class="umd-header__nav t-interactive" aria-label="Main">
+      {{- range .Site.Menus.main -}}
+        {{- /* Anything handled by the utility row below is skipped here.
+               A typed item that is not excluded would otherwise fall through
+               and render as a plain text link with an empty href. */ -}}
+        {{- if or (eq .Params.type "search") (eq .Params.type "theme-toggle") .Params.icon -}}
+        {{- else -}}
+          {{- $link := .URL -}}
+          {{- with .PageRef -}}
+            {{- if hasPrefix . "/" -}}
+              {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+            {{- end -}}
           {{- end -}}
+          {{- /* Current-section marking, kept in step with Hextra's own
+                 navbar-link.html: the menu-current checks cover section
+                 landing pages and their descendants, and the normalized
+                 path compare catches the cases they miss (trailing-slash
+                 mismatches). Expressed as aria-current rather than a state
+                 class so the indication is programmatic as well as visual,
+                 and so custom.css has a single hook to style. */ -}}
+          {{- $active := or ($currentPage.HasMenuCurrent "main" .) ($currentPage.IsMenuCurrent "main" .) -}}
+          {{- if and (not $active) $link -}}
+            {{- if eq (strings.TrimSuffix "/" $currentPage.RelPermalink) (strings.TrimSuffix "/" $link) -}}
+              {{- $active = true -}}
+            {{- end -}}
+          {{- end -}}
+          <a class="umd-header__nav-link" href="{{ $link }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
         {{- end -}}
+      {{- end -}}
+    </nav>
 
-        {{- if eq .Params.type "link" -}}
-          {{- partial "navbar-link.html" (dict "currentPage" $currentPage "link" $link "external" $external "item" . "icon" .Params.icon) -}}
+    {{- /* Utility row: inline search + icon links + mobile sidebar toggle. */ -}}
+    <div class="umd-header__utility hextra-navbar-utility hx:flex hx:items-center hx:gap-2">
+      {{- range .Site.Menus.main -}}
+        {{- if eq .Params.type "search" -}}
+          {{- partial "search.html" (dict "params" .Params "location" "navbar") -}}
         {{- else if eq .Params.type "theme-toggle" -}}
-          {{- partial "theme-toggle.html" (dict "iconHeight" $iconHeight "hideLabel" (not .Params.label) "iconHeight" $iconHeight "location" "top" "class" "hx:p-2") -}}
-        {{- else if eq .Params.type "language-switch" -}}
-          {{- partial "language-switch" (dict "context" $page "grow" false "hideLabel" (not .Params.label) "iconName" (.Params.icon | default "translate") "iconHeight" $iconHeight "location" "top" "class" "hx:p-2") -}}
+          {{- /* The site's only theme control. Hextra's default homes for it --
+                 the footer switches row and the sidebar -- are both switched off
+                 via theme.displayToggle in hugo.yaml, because the footer row
+                 renders above a light divider on this permanently dark footer
+                 and the sidebar copy is absent from pages without a sidebar.
+                 The header carries it at every breakpoint instead. */ -}}
+          {{- partial "theme-toggle.html" (dict "iconHeight" $iconHeight "hideLabel" (not .Params.label) "location" "top" "class" "hx:p-2") -}}
         {{- else if .Params.icon -}}
-          {{- /* Display icon menu item */ -}}
+          {{- $link := .URL -}}
+          {{- $external := strings.HasPrefix $link "http" -}}
+          {{- /* Icon items may be configured with `pageRef` instead of `url`
+                 (the Atom Feed entry uses `pageRef: /index.xml`). Hugo leaves
+                 `.URL` empty for those, and an empty href just reloads the
+                 current page, so resolve the ref the same way the text nav
+                 above does. */ -}}
+          {{- with .PageRef -}}
+            {{- if hasPrefix . "/" -}}
+              {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+            {{- end -}}
+          {{- end -}}
+          {{- /* Kept from Hextra's navbar.html. An icon item that resolves to
+                 no link renders href="", which reloads the current page rather
+                 than failing visibly -- the exact regression this partial
+                 shipped with. The theme warns about it at build time; that
+                 warning is worth keeping when overriding the theme. */ -}}
           {{- if not $link -}}{{ warnf "Icon menu item '%s' has no URL" .Name }}{{- end -}}
-          {{- $rel := cond (eq .Params.icon "mastodon") "noreferrer me" "noreferrer" }}
-          <a class="hx:p-2 hx:text-current" {{ if $external }}target="_blank" rel="{{ $rel }}"{{ end }} href="{{ $link }}">
+          {{- $rel := cond (eq .Params.icon "mastodon") "noreferrer me" "noreferrer" -}}
+          <a class="hx:p-2 hx:text-current" {{ if $external }}target="_blank" rel="{{ $rel }}"{{ end }} href="{{ $link }}" title="{{ or (T .Identifier) .Name | safeHTML }}">
             {{- partial "utils/icon.html" (dict "name" .Params.icon "attributes" (printf "height=%d" $iconHeight)) -}}
             <span class="hx:sr-only">{{ or (T .Identifier) .Name | safeHTML }}</span>
           </a>
-        {{- else -}}
-          {{- partial "navbar-link.html" (dict "currentPage" $currentPage "link" $link "external" $external "item" .) -}}
         {{- end -}}
       {{- end -}}
-    {{- end -}}
 
+      <a class="umd-header__cta t-interactive" href="https://giving.umd.edu/giving/showSchool.php?name=libraries"
+         target="_blank" rel="noopener noreferrer">Give Now</a>
 
-    <button type="button" aria-label="Menu" class="hextra-hamburger-menu hx:cursor-pointer hx:-mr-2 hx:rounded-sm hx:p-2 hx:active:bg-gray-400/20 hx:md:hidden">
-      {{- partial "utils/icon.html" (dict "name" "hamburger-menu" "attributes" (printf "height=%d" $iconHeight)) -}}
-    </button>
-  </nav>
+      <button type="button" aria-label="{{ (T `menu`) | default `Menu` }}" aria-expanded="false"
+        class="hextra-hamburger-menu hx:cursor-pointer hx:rounded-sm hx:p-2 hx:active:bg-gray-400/20 hx:md:hidden hx:hextra-focus-visible-inset">
+        {{- partial "utils/icon.html" (dict "name" "hamburger-menu" "attributes" (printf "height=%d" $iconHeight)) -}}
+      </button>
+    </div>
+  </div>
 </div>

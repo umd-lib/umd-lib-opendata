@@ -44,4 +44,4 @@ tasks:
     test-python:
         desc: "Test all Python code examples in static/code/"
         cmds:
-            - python test_python_examples.py
+            - uv run test_python_examples.py

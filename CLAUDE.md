@@ -40,21 +40,32 @@ hugo server --logLevel debug --disableFastRender --port 1314 --buildDrafts --bui
 
 ## Python Environment
 
-Python scripts in `static/code/` demonstrate API usage for various UMD Libraries services. These scripts require Python 3.12+ and specific dependencies.
+Python scripts in `static/code/` demonstrate API usage for various UMD Libraries services. Each script is a self-contained [uv script](https://docs.astral.sh/uv/guides/scripts/): it declares its Python version and dependencies in a [PEP 723](https://peps.python.org/pep-0723/) inline metadata block, so no virtual environment or install step is needed.
 
-### Setup Python Environment
+### Running the Examples
+
+The project uses [uv](https://docs.astral.sh/uv/) for Python environment and
+dependency management:
 
 ```bash
-# Install Python version from .python-version
-pyenv install --skip-existing $(cat .python-version)
+# uv resolves each script's inline metadata automatically
+uv run static/code/drum-oaipmh.py
 
-# Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
+# The published copies work the same way
+uv run https://opendata.lib.umd.edu/code/drum-oaipmh.py
 ```
+
+Running an example needs no checkout and no install step. The project
+environment declared in `pyproject.toml` is only for the test harness and
+other repo-level tooling:
+
+```bash
+# Create the environment and install dependencies
+# (uv installs the pinned Python version from .python-version if needed)
+uv sync
+```
+
+Requires [uv](https://docs.astral.sh/uv/) (e.g. `brew install uv`).
 
 ### Testing Python Examples
 
@@ -65,20 +76,39 @@ Test all Python code examples to ensure they run correctly:
 task test-python
 
 # Or run directly with options
-python test_python_examples.py --verbose
-python test_python_examples.py --file drum-api.py
+uv run test_python_examples.py --verbose
+uv run test_python_examples.py --file drum-api.py
 ```
 
 See `TEST_PYTHON_EXAMPLES.md` for detailed documentation.
 
 ### Python Dependencies
 
-The `requirements.txt` includes:
+Dependencies are declared in two places, and the two must agree:
 
-* `pyoai==2.5.0` - OAI-PMH protocol client for metadata harvesting
-* `rdflib==7.6.0` - RDF and JSON-LD processing for semantic data
-* `requests==2.32.3` - HTTP client for API requests
-* `sru-queryer==2.1.3` - SRU (Search/Retrieve via URL) protocol client
+* `pyproject.toml` (locked in `uv.lock`) - the project environment used by
+  `task test-python` and other repo-level tooling
+* each script's PEP 723 block - what a reader gets when they run one example
+  on its own, with no checkout
+
+Both use the same set, at the same version floors:
+
+* `oaipmh>=3.2.0` - OAI-PMH protocol client for metadata harvesting (maintained
+  fork of `pyoai`; same API and import path, and unlike `pyoai` it does not
+  need a pinned legacy `setuptools` for `pkg_resources`)
+* `rdflib>=7.6.0` - RDF and JSON-LD processing for semantic data
+* `requests>=2.32.4` - HTTP client for API requests (the floor fixes
+  CVE-2024-47081, a `.netrc` credential leak)
+* `sru-queryer>=2.1.3` - SRU (Search/Retrieve via URL) protocol client
+
+Scripts that import `requests` also declare `urllib3>=2.5.0`, matching the
+constraint in `pyproject.toml` (CVE-2025-50181/50182). A standalone script has
+no project constraints to inherit, so the floor has to be stated inline.
+
+When bumping a floor for a security fix, change it in `pyproject.toml` **and**
+in every script metadata block that names the package.
+
+Scripts that use only the standard library declare `dependencies = []` to make that explicit. When adding a new script, declare every third-party import in its metadata block — `task test-python` runs each script via `uv run` and will fail if the block is incomplete.
 
 ## Architecture
 
@@ -106,6 +136,53 @@ The Hugo site content is organized as follows:
   * `search.html` - Search functionality customizations
 
 * **`layouts/_shortcodes/code.html`** - Custom shortcode for embedding Python code files directly into content with syntax highlighting and copy button
+
+### Editing Design System Content and Brand
+
+The brand shell is built on the UMD Libraries Drupal theme,
+`umd-lib/umdlib-design-system-theme` (machine name `umdlib_umdds`), not on the
+central `@universityofmaryland` web components. Its CSS is fetched at build time
+in `layouts/partials/custom/head-end.html` and inlined as a fingerprinted,
+SRI-hashed stylesheet, so nothing is vendored here and the visitor's browser
+loads nothing from a third party.
+
+Where things are edited:
+
+* **Hero** - front-matter `hero.*` in `content/_index.md`; markup in
+  `layouts/home.html`
+* **Cards** - the overridden shortcode `layouts/_shortcodes/card.html`;
+  authored as normal `{{< card >}}` in content
+* **Brand color / type** - `--primary-*` (Hextra's accent) in
+  `assets/css/custom.css`; everything else uses the Libraries theme's own
+  tokens (`--maryland-red`, `--space-*`, the gray ramp)
+* **Card-portal landings** (sidebar hidden, card grid as the only navigation) -
+  `portal: true` front matter, handled by `layouts/list.html`
+* **Which upstream ref we pin** - the single `$dsRef` line in `head-end.html`
+
+Three things to know before editing:
+
+1. **The token layer is a semantic inversion, not a palette swap.** Under
+   `.dark-theme`, `--white` becomes `#000000`, `--black` becomes `#ffffff`,
+   `--maryland-red` becomes the brand yellow, and the gray ramp reverses. So
+   `var(--white)` is not "white". Surfaces that must keep a fixed appearance in
+   both themes - the red university strip, the dark footer, the Give Now button
+   - use literal values on purpose; a token there would invert underneath its own
+   text. Hextra toggles `.dark`, and a small script in `head-end.html` mirrors
+   that onto `.dark-theme`.
+
+2. **Never put a `t-*` class on a wrapper around page content.** They are written
+   `.t-x, .t-x *`, so a `t-` class on a content region restyles every element
+   Goldmark emits inside it. Apply them to individual chrome elements only.
+
+3. **`css/base.css` is deliberately not fetched.** It carries a Tailwind v3-era
+   preflight and Hextra already compiles its own Tailwind v4 preflight; taking
+   both puts two generations of reset in one cascade.
+
+The font layer is subset at build time: `css/fonts.css` upstream is 739 KB of
+base64 TTF/OTF across twelve faces, only three of which any rule we consume
+names. `head-end.html` extracts those three and adds `font-display: swap`. If
+upstream re-cuts or renames a face, the build fails with a named error rather
+than silently falling back to a system font.
 
 ### Python Code Examples
 

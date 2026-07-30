@@ -2,15 +2,19 @@
 """
 Test runner for Python code examples in static/code/
 
-This script runs each Python example file (except drum-harvest.py) and validates:
+This script runs each Python example file (except drum-harvest.py) via
+`uv run` and validates:
+- The script's PEP 723 inline metadata resolves (dependencies install)
 - The script runs without errors
 - The script produces output
 - The script exits with code 0
 
+Requires uv: https://docs.astral.sh/uv/
+
 Usage:
-    python test_python_examples.py
-    python test_python_examples.py --verbose
-    python test_python_examples.py --file drum-api.py
+    uv run test_python_examples.py
+    uv run test_python_examples.py --verbose
+    uv run test_python_examples.py --file drum-api.py
 """
 
 import argparse
@@ -28,10 +32,16 @@ SKIP_FILES = {
 # Files expected to fail (known issues)
 EXPECTED_FAIL_FILES = {
     'geoportal-search.py',  # Service currently unavailable or endpoint changed
+    # The AV Digital Collections OAI endpoint returns HTTP 500 on ListRecords
+    # (server-side, reproducible with curl) as of 2026-07-30. The non-AV
+    # endpoint had the same fault on 2026-07-16 and has since recovered.
+    'digital-collections-av-oaipmh.py',
 }
 
-# Timeout in seconds for each script
-TIMEOUT_SECONDS = 30
+# Timeout in seconds for each script. Generous because `uv run` may need to
+# resolve and download a script's PEP 723 dependencies on a cold cache
+# (e.g. a fresh CI runner) before the script itself starts.
+TIMEOUT_SECONDS = 120
 
 
 class TestResult:
@@ -63,9 +73,10 @@ def run_python_file(filepath: Path, timeout: int = TIMEOUT_SECONDS) -> TestResul
     filename = filepath.name
 
     try:
-        # Run the Python file
+        # Run via uv so each script's PEP 723 metadata block is resolved and
+        # validated as part of the test
         result = subprocess.run(
-            [sys.executable, str(filepath)],
+            ['uv', 'run', str(filepath)],
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -87,6 +98,15 @@ def run_python_file(filepath: Path, timeout: int = TIMEOUT_SECONDS) -> TestResul
             return_code=result.returncode
         )
 
+    except FileNotFoundError:
+        return TestResult(
+            filename=filename,
+            success=False,
+            output="",
+            error="uv not found. Install it first: https://docs.astral.sh/uv/ "
+                  "(e.g. `brew install uv`)",
+            return_code=-1
+        )
     except subprocess.TimeoutExpired:
         return TestResult(
             filename=filename,
@@ -146,7 +166,7 @@ def print_result_summary(results: List[TestResult], verbose: bool = False) -> No
         print("FAILED TESTS:")
         print("-" * 80)
         for result in results:
-            if not result.success and not result.skipped:
+            if not result.success and not result.skipped and not result.expected_fail:
                 print(f"\n❌ {result.filename}")
                 print(f"   Return code: {result.return_code}")
                 if result.error:

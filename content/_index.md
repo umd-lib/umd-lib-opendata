@@ -1,6 +1,14 @@
 ---
 title: University of Maryland Libraries Open Data
 toc: false
+hero:
+  eyebrow: UMD Libraries
+  tagline: >-
+    Open documentation, APIs, services, and datasets from the University of
+    Maryland Libraries — built to promote equitable, open, and transparent
+    scholarship.
+  cta_text: Explore the APIs
+  cta_url: /apis
 ---
 
 This collection of [open data](https://en.wikipedia.org/wiki/Open_data)
@@ -15,11 +23,15 @@ See also information about our [Open Scholarship
 Services](https://www.lib.umd.edu/research/oss) and [Data
 Services](https://www.lib.umd.edu/research/data).
 
-Inline Python code examples are intended to be runnable in a Python 3.12+
-environment using the [Python Standard
-Library](https://docs.python.org/3/library/). Downloadable Python code examples
-may require [installation of external
-modules](https://github.com/umd-lib/umd-lib-opendata#python-environment).
+Python code examples on this site are self-contained
+[uv scripts](https://docs.astral.sh/uv/guides/scripts/): each declares its
+Python version and dependencies inline, following
+[PEP 723](https://peps.python.org/pep-0723/), so
+[uv](https://docs.astral.sh/uv/) can run any example — downloaded locally or
+straight from its published URL — with no environment setup or module
+installation. See the [project
+README](https://github.com/umd-lib/umd-lib-opendata#python-code-examples) for
+details.
 
 ## Explore
 

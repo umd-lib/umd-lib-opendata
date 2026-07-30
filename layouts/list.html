@@ -1,0 +1,31 @@
+{{ define "main" }}
+  {{- /*
+    Section landing layout, overriding Hextra's list.html.
+
+    Pages with `portal: true` in front matter render as branded card portals:
+    the Hextra sidebar and TOC are hidden so the UMD card grid is the primary
+    navigation, avoiding duplicating the same links in both the sidebar and the
+    grid. Content subpages are unaffected and keep the sidebar.
+  */ -}}
+  {{- $portal := .Params.portal | default false -}}
+  <div class='hx:mx-auto hx:flex hextra-max-page-width'>
+    {{ if $portal }}
+      {{ partial "sidebar.html" (dict "context" . "disableSidebar" true "displayPlaceholder" true) }}
+    {{ else }}
+      {{ partial "sidebar.html" (dict "context" .) }}
+      {{ partial "toc.html" . }}
+    {{ end }}
+    <article class="hx:w-full hx:break-words hx:flex hx:min-h-[calc(100vh-var(--navbar-height))] hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
+      <main id="content" class="hx:w-full hx:min-w-0 hextra-max-content-width hx:px-6 hx:pt-4 hx:md:px-12">
+        {{ partial "breadcrumb.html" (dict "page" . "enable" false) }}
+        <div class="content">
+          {{ if .Title }}<h1>{{ .Title }}</h1>{{ end }}
+          {{ .Content }}
+        </div>
+        <div class="hx:mt-16"></div>
+        {{ partial "components/last-updated.html" . }}
+        {{ partial "components/comments.html" . }}
+      </main>
+    </article>
+  </div>
+{{ end }}
