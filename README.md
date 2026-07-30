@@ -29,7 +29,8 @@ On macOS with [Homebrew](https://brew.sh/):
 brew install hugo go-task
 ```
 
-Running the Python code examples additionally requires Python 3.12+ (see
+Running the Python code examples additionally requires
+[uv](https://docs.astral.sh/uv/) (see
 [Python code examples](#python-code-examples)).
 
 ## Getting started
@@ -63,20 +64,38 @@ For more options, see the [Hugo CLI docs](https://gohugo.io/commands/).
 
 The [`static/code/`](static/code) directory contains standalone Python
 scripts that demonstrate how to query UMD Libraries services (OAI-PMH,
-OpenSearch, the DSpace REST API, JSON-LD, and more). They require Python
-3.12+; the pinned version lives in [`.python-version`](.python-version).
+OpenSearch, the DSpace REST API, JSON-LD, and more).
 
-Set up an environment with [uv](https://docs.astral.sh/uv/):
+Each script declares its own dependencies in a
+[PEP 723](https://peps.python.org/pep-0723/) inline metadata block, so
+[uv](https://docs.astral.sh/uv/) can run any of them with no environment
+setup — locally or straight from the published site:
+
+```bash
+# Install uv (macOS with Homebrew; see the uv docs for other platforms)
+brew install uv
+
+# Run a local copy
+uv run static/code/drum-oaipmh.py
+
+# Or run directly from the published URL — no clone required
+uv run https://opendata.lib.umd.edu/code/drum-oaipmh.py
+```
+
+uv reads the metadata block, installs the declared dependencies into a cached
+ephemeral environment, and executes the script. The scripts remain plain
+Python: they also run with `python script.py` inside any environment that
+already has their dependencies installed.
+
+To work on the repo itself, create the project environment — it is what the
+test suite runs in:
 
 ```bash
 # Create the environment and install dependencies
 # (uv installs the pinned Python version automatically if needed)
 uv sync
-```
 
-Run the examples' test suite to confirm they work:
-
-```bash
+# Confirm the examples still work
 task test-python
 ```
 
