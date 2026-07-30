@@ -15,17 +15,14 @@ RUN echo 'export PATH=$PATH:/root/go/bin' >>  /root/.bashrc
 
 WORKDIR /build
 
-COPY archetypes /build/archetypes
-COPY content /build/content
-COPY i18n /build/i18n
-COPY layouts /build/layouts
-COPY static /build/static
-COPY themes /build/themes
-
-COPY hugo.yaml /build/hugo.yaml
-COPY go.mod /build/go.mod
-COPY go.sum /build/go.sum
-COPY Taskfile.yaml /build/Taskfile.yaml
+# Copy everything and let .dockerignore subtract. Do not go back to enumerating
+# the directories to include: that form silently dropped assets/, and no build
+# error was possible, because Hextra ships a zero-byte assets/css/custom.css
+# stub at the same path as our override -- the union filesystem resolves it
+# either way, so the site built cleanly with the whole brand shell unstyled.
+# A denylist fails safe: a forgotten entry copies a spare file rather than
+# losing a required one.
+COPY . /build/
 
 ARG HUGO_BASEURL=https://opendata.lib.umd.edu/
 ENV HUGO_BASEURL=$HUGO_BASEURL
