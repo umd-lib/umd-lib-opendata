@@ -2,7 +2,8 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "requests==2.32.3",
+#     "requests>=2.32.4",
+#     "urllib3>=2.5.0",
 # ]
 # ///
 

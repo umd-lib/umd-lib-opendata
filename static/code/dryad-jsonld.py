@@ -2,8 +2,9 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "rdflib==7.6.0",
-#     "requests==2.32.3",
+#     "rdflib>=7.6.0",
+#     "requests>=2.32.4",
+#     "urllib3>=2.5.0",
 # ]
 # ///
 

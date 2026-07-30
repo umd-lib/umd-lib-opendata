@@ -32,9 +32,9 @@ SKIP_FILES = {
 # Files expected to fail (known issues)
 EXPECTED_FAIL_FILES = {
     'geoportal-search.py',  # Service currently unavailable or endpoint changed
-    # Both Digital Collections OAI endpoints return HTTP 500 on ListRecords
-    # (server-side, reproducible with curl) as of 2026-07-16
-    'digital-collections-oaipmh.py',
+    # The AV Digital Collections OAI endpoint returns HTTP 500 on ListRecords
+    # (server-side, reproducible with curl) as of 2026-07-30. The non-AV
+    # endpoint had the same fault on 2026-07-16 and has since recovered.
     'digital-collections-av-oaipmh.py',
 }
 

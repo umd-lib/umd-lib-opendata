@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "sru-queryer==2.1.3",
+#     "sru-queryer>=2.1.3",
 # ]
 # ///
 
