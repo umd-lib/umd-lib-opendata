@@ -20,12 +20,10 @@
     typography.css.
   */ -}}
   {{- /*
-    Pinned to the merge commit of LIBWEB-6781, which is currently the only
-    immutable ref that contains the split -- it landed on the 4.0.x branch and no
-    tag has been cut yet. Swap this for the tag (expected 4.0.1) when it lands;
-    it is the only line that needs to change.
+    Pinned to the 4.0.1 tag, the first release containing the LIBWEB-6781 layer
+    split. To move to a later release, change this line and nothing else.
   */ -}}
-  {{- $dsRef := "4dbe11007a5dfdfacae8ce5cc29d50fa5afe7286" -}}
+  {{- $dsRef := "4.0.1" -}}
   {{- $dsBase := printf "https://raw.githubusercontent.com/umd-lib/umdlib-design-system-theme/%s/css" $dsRef -}}
 
   {{- /*
