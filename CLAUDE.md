@@ -91,22 +91,39 @@ Dependencies are declared in two places, and the two must agree:
 * each script's PEP 723 block - what a reader gets when they run one example
   on its own, with no checkout
 
-Both use the same set, at the same version floors:
+**The scripts pin exact versions (`==`); `pyproject.toml` keeps floors (`>=`).**
+That asymmetry is deliberate, and it is about supply chain rather than
+compatibility.
 
-* `oaipmh>=3.2.0` - OAI-PMH protocol client for metadata harvesting (maintained
+The project environment is already pinned by `uv.lock`, so a floor there
+resolves to a reviewed, committed version. A published script has no lockfile:
+a reader runs `uv run https://opendata.lib.umd.edu/code/<name>.py` and uv
+resolves against PyPI at that moment. Under a floor, that means executing
+whatever the index serves that day, on the reader's machine, at our
+invitation. A compromised release of any of these packages would be
+distributed by us. An exact pin makes the version a reviewed decision.
+
+The pinned versions are the ones `uv.lock` resolves, so the scripts and
+`task test-python` exercise the same code:
+
+* `oaipmh==3.2.0` - OAI-PMH protocol client for metadata harvesting (maintained
   fork of `pyoai`; same API and import path, and unlike `pyoai` it does not
   need a pinned legacy `setuptools` for `pkg_resources`)
-* `rdflib>=7.6.0` - RDF and JSON-LD processing for semantic data
-* `requests>=2.32.4` - HTTP client for API requests (the floor fixes
+* `rdflib==7.6.0` - RDF and JSON-LD processing for semantic data
+* `requests==2.34.2` - HTTP client for API requests (must stay >= 2.32.4:
   CVE-2024-47081, a `.netrc` credential leak)
-* `sru-queryer>=2.1.3` - SRU (Search/Retrieve via URL) protocol client
+* `sru-queryer==2.1.3` - SRU (Search/Retrieve via URL) protocol client
+* `urllib3==2.7.0` - declared by every script importing `requests` (must stay
+  >= 2.5.0: CVE-2025-50181/50182). A standalone script inherits no project
+  constraints, so it has to be stated inline
 
-Scripts that import `requests` also declare `urllib3>=2.5.0`, matching the
-constraint in `pyproject.toml` (CVE-2025-50181/50182). A standalone script has
-no project constraints to inherit, so the floor has to be stated inline.
+`requires-python = ">=3.12"` stays a floor. It selects an interpreter the
+reader already has rather than a package we would be distributing.
 
-When bumping a floor for a security fix, change it in `pyproject.toml` **and**
-in every script metadata block that names the package.
+The cost of pinning is that security fixes no longer arrive on their own, so
+these versions have to be reviewed and bumped deliberately. When bumping:
+update `pyproject.toml`, run `uv lock`, then set every script metadata block
+naming that package to the newly locked version. The two must agree.
 
 Scripts that use only the standard library declare `dependencies = []` to make that explicit. When adding a new script, declare every third-party import in its metadata block — `task test-python` runs each script via `uv run` and will fail if the block is incomplete.
 
@@ -130,7 +147,7 @@ The Hugo site content is organized as follows:
 
 ### Custom Components
 
-* **`layouts/partials/`** - Custom partial templates overriding Hextra defaults
+* **`layouts/_partials/`** - Custom partial templates overriding Hextra defaults
   * `navbar-title.html` - Custom navbar with UMD Libraries logo
   * `navbar.html` - Navigation bar customizations
   * `search.html` - Search functionality customizations
@@ -142,7 +159,7 @@ The Hugo site content is organized as follows:
 The brand shell is built on the UMD Libraries Drupal theme,
 `umd-lib/umdlib-design-system-theme` (machine name `umdlib_umdds`), not on the
 central `@universityofmaryland` web components. Its CSS is fetched at build time
-in `layouts/partials/custom/head-end.html` and inlined as a fingerprinted,
+in `layouts/_partials/custom/head-end.html` and inlined as a fingerprinted,
 SRI-hashed stylesheet, so nothing is vendored here and the visitor's browser
 loads nothing from a third party.
 
@@ -157,7 +174,9 @@ Where things are edited:
   tokens (`--maryland-red`, `--space-*`, the gray ramp)
 * **Card-portal landings** (sidebar hidden, card grid as the only navigation) -
   `portal: true` front matter, handled by `layouts/list.html`
-* **Which upstream ref we pin** - the single `$dsRef` line in `head-end.html`
+* **Which upstream ref we pin** - `params.designSystem.ref` in `hugo.yaml`,
+  read by both `_partials/custom/head-end.html` (stylesheet, fonts) and
+  `_partials/favicons.html` (favicon). It is the only place the tag appears
 
 Three things to know before editing:
 
@@ -272,6 +291,20 @@ Example shortcode usage:
 ```go-html-template
 {{< code filename="static/code/drum-api.py" name="drum-api.py" language="python" >}}
 ```
+
+Use this shortcode whenever a code block needs a filename label. Do **not**
+label a fenced block with Hextra's attribute syntax:
+
+```markdown
+```bash {filename="drum-oaipmh.sh"}
+```
+
+Hextra's `components/codeblock.html` trims the whitespace around that label, so
+Hugo's `.Plain` search index concatenates it into the first line of code and
+indexes `drum-oaipmh.shcurl` as a single word. The `code` shortcode above
+overrides that behaviour; the fenced-block path does not. A filename label
+should also name a file that exists — the labels removed in this branch named
+`.sh` scripts the site has never published.
 
 ### API Documentation
 

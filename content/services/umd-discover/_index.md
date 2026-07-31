@@ -19,7 +19,9 @@ on [how to structure SRU retrieval queries](https://developers.exlibrisgroup.com
 
 Endpoint: <https://usmai-umcp.alma.exlibrisgroup.com/view/sru/01USMAI_UMCP>
 
-```bash {filename="umddiscover-sru.sh"}
+```bash
+#!/bin/bash
+
 curl "https://usmai-umcp.alma.exlibrisgroup.com/view/sru/01USMAI_UMCP?version=1.2&operation=explain"
 
 curl "https://usmai-umcp.alma.exlibrisgroup.com/view/sru/01USMAI_UMCP?version=1.2&operation=searchRetrieve&query=alma.all_for_ui=%22libraries%22&recordSchema=dc"
