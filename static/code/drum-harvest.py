@@ -2,8 +2,8 @@
 # /// script
 # requires-python = ">=3.12"
 # dependencies = [
-#     "requests>=2.32.4",
-#     "urllib3>=2.5.0",
+#     "requests==2.34.2",
+#     "urllib3==2.7.0",
 # ]
 # ///
 
@@ -16,11 +16,37 @@
 import json
 from pathlib import Path
 import argparse
+import sys
 import time
 
 import requests
+import urllib3
 
 ENDPOINT = 'https://api.drum.lib.umd.edu/server/api'
+
+
+def is_transient(error):
+    ''' Decide whether a failed request is worth trying again later.
+
+    A host name that does not resolve, or a certificate that will not verify,
+    is a settled fact about the URL rather than a passing condition: it means
+    this example is pointed somewhere that no longer answers for it. requests
+    reports the first as a ConnectionError wrapping urllib3's
+    NameResolutionError and the second as its own SSLError, and neither
+    carries a response, so a status code alone cannot tell them apart from a
+    refused connection.
+    '''
+    if isinstance(error, requests.exceptions.SSLError):
+        return False
+    cause = error.args[0] if error.args else None
+    if isinstance(getattr(cause, 'reason', None), urllib3.exceptions.NameResolutionError):
+        return False
+
+    status = getattr(error.response, 'status_code', None)
+    # No status at all means the request never reached an application; 5xx and
+    # 429 mean the service cannot serve right now. A 4xx is this example's
+    # problem.
+    return status is None or status >= 500 or status == 429
 
 
 def harvest_bitstream(bitstream, dir):
@@ -145,13 +171,20 @@ def harvest_items():
     # Iterate over paged results
     while True:
 
-        response = requests.get(items_url, params={'size': 100})
-
-        if not response.ok:
-            print(f'Error reading response: {response}')
-            return
-
-        response = json.loads(response.text)
+        try:
+            response = requests.get(items_url, params={'size': 100})
+            response.raise_for_status()
+            response = response.json()
+        except requests.exceptions.JSONDecodeError:
+            # JSONDecodeError subclasses RequestException, so this clause
+            # has to come first to be reachable.
+            print(f'{items_url} did not return JSON', file=sys.stderr)
+            # A body that is not JSON means the API changed under this example.
+            sys.exit(1)
+        except requests.RequestException as error:
+            print(f'{items_url} could not be read: {error}', file=sys.stderr)
+            # 75 = EX_TEMPFAIL: the condition may clear on its own.
+            sys.exit(75 if is_transient(error) else 1)
 
         if args.collection_id:
             response = response['_embedded']['searchResult']
