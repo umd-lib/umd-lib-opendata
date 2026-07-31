@@ -29,7 +29,9 @@ pyproject.toml
 uv.lock
 tox.ini
 test_python_examples.py
-__pycache__/
+# Needs "**/": per the rule at the top of this file, a bare "__pycache__/"
+# matches only the context root, not static/code/__pycache__.
+**/__pycache__/
 
 # Harvested DRUM metadata and bitstreams. Working data, never part of the site.
 harvest/
