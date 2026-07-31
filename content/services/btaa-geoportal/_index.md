@@ -15,13 +15,6 @@ OpenAPI Description: <https://geo.btaa.org/api/openapi.json>
 
 Interactive Documentation: <https://geo.btaa.org/api/docs>
 
-The geoportal was rebuilt on a new platform and now publishes a documented
-JSON:API. The earlier Blacklight-style endpoints — the OpenSearch description
-at `/catalog/opensearch.xml` and the `?format=rss` and `?format=json`
-parameters on the search page — have been withdrawn. Requests using them
-return the HTML page with a `200` status rather than an error, so a client
-that checks only the status code fails when it tries to parse the body.
-
 The search endpoint takes `q` for the keyword query, along with `page`,
 `per_page` (maximum 100), `sort`, and facet parameters:
 
