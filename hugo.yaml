@@ -10,6 +10,18 @@ module:
   imports:
     - path: github.com/imfing/hextra
 
+# layouts/_partials/favicons.html fetches the official favicon.ico from the
+# pinned design-system ref. This is not an allowlist and nothing is being
+# refused: the setting names Content-Types Hugo should trust from the server
+# instead of sniffing the bytes itself. Hugo cannot classify a
+# multi-resolution .ico by content, so without this entry resources.GetRemote
+# fails with "failed to resolve media type" and the build stops. Anchored to
+# the one type raw.githubusercontent.com sends rather than opening image/*.
+security:
+  http:
+    mediaTypes:
+      - ^image/vnd\.microsoft\.icon$
+
 markup:
   # allow raw html
   goldmark:
@@ -57,6 +69,15 @@ menu:
         type: theme-toggle
 
 params:
+  # The single pin for umd-lib/umdlib-design-system-theme. Both
+  # layouts/_partials/custom/head-end.html (stylesheet and fonts) and
+  # layouts/_partials/favicons.html (favicon.ico) fetch from this ref at build
+  # time. 4.0.1 is the first release carrying the LIBWEB-6781 layer split.
+  # Changing this line moves every fetched asset together; both partials fail
+  # the build loudly if it is unset.
+  designSystem:
+    ref: "4.0.1"
+
   theme:
     # Suppresses Hextra's two default homes for the theme control: the footer
     # switches row (which renders above a light divider on this permanently dark
@@ -78,7 +99,7 @@ params:
   footer:
     # Both govern Hextra's own copyright block, which is switched off here: it
     # renders a fixed translation string and so cannot carry the current year.
-    # The copyright line comes from layouts/partials/custom/footer.html instead
+    # The copyright line comes from layouts/_partials/custom/footer.html instead
     # and updates itself. Setting either true would render a second, redundant
     # block beneath ours.
     displayCopyright: false
