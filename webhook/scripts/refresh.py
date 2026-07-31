@@ -27,6 +27,7 @@ def validate_environment():
     git_repo_branch = os.environ.get('GIT_REPO_BRANCH', '')
     git_repo_url = os.environ.get('GIT_REPO_URL', '')
     git_repo_secret = os.environ.get('GIT_REPO_SECRET', '')
+    git_repo_skip_secret_validation = os.environ.get('GIT_REPO_SKIP_SECRET_VALIDATION', 'false')
 
     if not git_repo_branch:
         log_error("Missing configuration! GIT_REPO_BRANCH cannot be empty")
@@ -36,13 +37,13 @@ def validate_environment():
         log_error("Missing configuration! GIT_REPO_URL cannot be empty")
         sys.exit(1)
 
-    if not git_repo_secret:
+    if not git_repo_secret and git_repo_skip_secret_validation != 'true':
         log_error("Missing configuration! GIT_REPO_SECRET cannot be empty")
         sys.exit(1)
 
-    return git_repo_branch, git_repo_url, git_repo_secret
+    return git_repo_branch, git_repo_url, git_repo_secret, git_repo_skip_secret_validation
 
-def validate_webhook(git_repo_branch, git_repo_url, git_repo_secret):
+def validate_webhook(git_repo_branch, git_repo_url, git_repo_secret, git_repo_skip_secret_validation):
     """Validate webhook payload matches expected repository and branch."""
     expected_ref = f"refs/heads/{git_repo_branch}"
     hook_ref = os.environ.get('HOOK_ref', '')
@@ -53,14 +54,17 @@ def validate_webhook(git_repo_branch, git_repo_url, git_repo_secret):
     log_info(f"{hook_payload=}")
     log_info(f"{hook_signature=}")
 
-    if not hook_payload:
-        log_warn(f"Validation failed, missing payload! Ignoring webhook for ref={hook_ref}, repository={hook_clone_url}")
-        sys.exit(0)
+    if git_repo_skip_secret_validation == 'true':
+        log_warn("GIT_REPO_SKIP_SECRET_VALIDATION=true, skipping webhook secret validation")
+    else:
+        if not hook_payload:
+            log_warn(f"Validation failed, missing payload! Ignoring webhook for ref={hook_ref}, repository={hook_clone_url}")
+            sys.exit(0)
 
-    # Validate the signature
-    validate_signature(hook_payload.encode('utf-8'), git_repo_secret, hook_signature)
+        # Validate the signature
+        validate_signature(hook_payload.encode('utf-8'), git_repo_secret, hook_signature)
 
-    if hook_ref != expected_ref or hook_clone_url != git_repo_url or not hook_payload:
+    if hook_ref != expected_ref or hook_clone_url != git_repo_url:
         log_warn(f"Validation failed, url or branch do not match! Ignoring webhook for ref={hook_ref}, repository={hook_clone_url}")
         sys.exit(0)
 
@@ -139,10 +143,10 @@ def main():
         os.environ['PATH'] = f"{current_path}:{go_bin_path}"
 
     # Validate environment
-    git_repo_branch, git_repo_url, git_repo_secret = validate_environment()
+    git_repo_branch, git_repo_url, git_repo_secret, git_repo_skip_secret_validation = validate_environment()
 
     # Validate webhook
-    validate_webhook(git_repo_branch, git_repo_url, git_repo_secret)
+    validate_webhook(git_repo_branch, git_repo_url, git_repo_secret, git_repo_skip_secret_validation)
 
     # Acquire lock
     lock_file = "/tmp/refresh.lock"
