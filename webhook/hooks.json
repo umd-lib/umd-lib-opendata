@@ -3,12 +3,18 @@
     "id": "refresh",
     "execute-command": "/scripts/refresh.py",
     "command-working-directory": "/tmp",
+    "trigger-rule": {
+      "match": {
+        "type": "payload-hmac-sha256",
+        "secret": "{{ getenv "GIT_REPO_WEBHOOK_SECRET" }}",
+        "parameter": {
+          "source": "header",
+          "name": "X-Hub-Signature-256"
+        }
+      }
+    },
     "pass-environment-to-command":
     [
-      {
-        "source": "entire-payload",
-        "envname": "HOOK_payload"
-      },
       {
         "source": "payload",
         "name": "ref",

@@ -31,7 +31,7 @@ docker run --rm -it -p 9000:9000 \
 -v ./target:/target \
 -e GIT_REPO_URL="https://github.com/umd-lib/umd-lib-opendata.git" \
 -e GIT_REPO_BRANCH="feat/webhook" \
--e GIT_REPO_SECRET="example-secret" \
+-e GIT_REPO_WEBHOOK_SECRET="example-secret" \
 opendata-webhook:latest
 ```
 
