@@ -1,1 +1,7 @@
 editThisPage: "View this page on GitHub →"
+
+# Hextra derives the search input's aria-label from this key, so overriding it
+# names the field for screen readers as well as sighted users. "Search..." does
+# not say what is being searched. Setting the string here replaces a forked
+# copy of the theme's search.html that existed only to change that label.
+searchPlaceholder: "Search this website"

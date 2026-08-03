@@ -16,7 +16,9 @@ Endpoint: <https://api.drum.lib.umd.edu/server/oai/request>
 
 Example:
 
-```bash {filename="drum-oaipmh.sh"}
+```bash
+#!/bin/bash
+
 curl "https://api.drum.lib.umd.edu/server/oai/request?verb=Identify"
 
 curl "https://api.drum.lib.umd.edu/server/oai/request?verb=ListSets"

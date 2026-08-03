@@ -38,7 +38,7 @@ details.
 {{< cards >}}
   {{< card link="services" title="Services" icon="book-open" >}}
   {{< card link="apis" title="APIs" icon="book-open" >}}
-  {{< card link="datasets" title="DataSets" icon="book-open" >}}
+  {{< card link="datasets" title="Datasets" icon="book-open" >}}
   {{< card link="contact" title="Contact Us" icon="user" >}}
   {{< card link="posts" title="Blog" icon="newspaper" >}}
 {{< /cards >}}

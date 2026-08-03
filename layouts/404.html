@@ -1,0 +1,49 @@
+{{ define "main" }}
+  {{- /*
+    Branded 404, overriding Hextra's standalone error page.
+
+    The theme's 404.html does not go through baseof, so it renders as a bare
+    centred "404 This page could not be found." with no navbar, no footer and
+    no links at all. Defining "main" here puts the page back inside baseof, so
+    it gets the same chrome as every other page -- which is the point: a
+    visitor who mistypes a URL needs a way back into the site, and the header
+    and footer are that way.
+
+    nginx serves this file for any unmatched path (see nginx/default.conf);
+    without that directive it never reaches a visitor at all.
+
+    Section links come from the main menu rather than being hardcoded, so this
+    page cannot drift out of step with the navigation. Icon entries (GitHub,
+    the Atom feed) and the search and theme-toggle controls are skipped: they
+    are chrome, not destinations.
+  */ -}}
+  <div class='hx:mx-auto hx:flex hextra-max-page-width'>
+    {{ partial "sidebar.html" (dict "context" . "disableSidebar" true "displayPlaceholder" false) }}
+    <article class="umd-page-fill hx:w-full hx:break-words hx:flex hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
+      <main id="content" class="hx:w-full hx:min-w-0 hextra-max-content-width hx:px-6 hx:pt-4 hx:md:px-12">
+        <div class="content">
+          <h1>Page not found</h1>
+          <p>
+            Sorry &mdash; there is nothing at this address. The page may have
+            moved, or the link that brought you here may be out of date.
+          </p>
+          <p>Try one of these instead:</p>
+          <ul>
+            <li><a href="{{ site.Home.RelPermalink }}">Open Data home</a></li>
+            {{- range site.Menus.main -}}
+              {{- if and (not .Params.icon) (not .Params.type) -}}
+                {{- $link := .URL -}}
+                {{- with .PageRef -}}
+                  {{- if hasPrefix . "/" -}}
+                    {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+                  {{- end -}}
+                {{- end -}}
+                {{- if $link }}<li><a href="{{ $link }}">{{ .Name }}</a></li>{{ end -}}
+              {{- end -}}
+            {{- end -}}
+          </ul>
+        </div>
+      </main>
+    </article>
+  </div>
+{{ end }}

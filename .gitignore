@@ -9,3 +9,8 @@ resources/
 
 # Claude
 .claude/
+
+# Python bytecode. static/ is published verbatim, so a __pycache__ committed
+# there is served from the site.
+__pycache__/
+*.py[cod]

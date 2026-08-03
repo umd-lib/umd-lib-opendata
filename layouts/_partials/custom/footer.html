@@ -1,0 +1,79 @@
+{{- /*
+  UMD Libraries footer content, rendered through Hextra's own footer hook --
+  the theme's sanctioned extension point, so the wrapper (max-width, centring,
+  safe-area padding) stays theme-owned; this file emits content only. The dark
+  surface lives on .hextra-footer in custom.css. Hextra's own copyright block
+  is disabled in hugo.yaml (can't carry the current year); the one below is
+  ours. Called with a dict, not the page, so access goes through .context.
+*/ -}}
+
+{{- $page := .context -}}
+{{- $logo := ($page.Site.Params.navbar.logo.dark | default $page.Site.Params.navbar.logo.path | default "images/logo.svg") -}}
+
+<div class="umd-footer__inner">
+  <div class="umd-footer__brand">
+    {{- /* Dark-variant logo (light wordmark) for legibility on the dark surface. */ -}}
+    <a href="{{ $page.Site.Home.RelPermalink }}" aria-label="{{ $page.Site.Title }} — Home">
+      <img src="{{ $logo | relURL }}"
+        alt="University of Maryland Libraries Logo" width="200" height="60" />
+    </a>
+    <p class="umd-footer__address t-body-small">
+      University of Maryland Libraries<br>
+      College Park, MD 20742
+    </p>
+  </div>
+
+  {{- /* Search for the 768-1023 band, where there is none in the header:
+         Hextra's drawer search is md:hidden so it stops at 768, and the navbar
+         field needs room the row does not have until 1024. Same approach as
+         GitHub and the Atom feed below -- the footer carries what the header
+         cannot at that width. custom.css shows this only in that band, so it
+         never duplicates a field that is already on screen. */ -}}
+  <div class="umd-footer__search">
+    {{- /* A span, not a <label>: the shared search partial emits no id to
+           associate one with, and a label pointing at nothing is worse than
+           none. The input carries its own aria-label. */ -}}
+    <span class="umd-footer__search-label t-label" aria-hidden="true">Search this site</span>
+    {{- partial "search.html" (dict "params" dict "location" "footer") -}}
+  </div>
+
+  <nav class="umd-footer__links t-interactive" aria-label="Footer">
+    <a href="https://giving.umd.edu/giving/showSchool.php?name=libraries" target="_blank" rel="noopener noreferrer">Give Now</a>
+    <a href="{{ `/contact/` | relURL }}">Contact Us</a>
+    {{- /* The Libraries' own privacy policy, not the University-wide notice at
+           umd.edu/privacy-notice. This is a Libraries site. */ -}}
+    <a href="https://www.lib.umd.edu/about/policies/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+    <a href="https://www.umd.edu/web-accessibility" target="_blank" rel="noopener noreferrer">Web Accessibility</a>
+
+    {{- /* GitHub and the Atom feed, as text. The header renders these same
+           entries as icons, but only from 1440 up -- below that the row cannot
+           fit them and they are hidden, which would otherwise leave them
+           unreachable on a phone: they appear in neither the hamburger menu nor
+           anywhere else. Emitting them here makes them available at every width
+           on every page.
+
+           Ranged over the same Site.Menus.main entries the header uses rather
+           than hardcoded, so the URLs have one source of truth in hugo.yaml.
+           .URL is empty for entries configured with pageRef (the Atom feed
+           uses pageRef: /index.xml), so resolve that the same way navbar.html
+           does. */ -}}
+    {{- range $page.Site.Menus.main -}}
+      {{- if .Params.icon -}}
+        {{- $link := .URL -}}
+        {{- with .PageRef -}}
+          {{- if hasPrefix . "/" -}}
+            {{- $link = relLangURL (strings.TrimPrefix "/" .) -}}
+          {{- end -}}
+        {{- end -}}
+        {{- if $link -}}
+          {{- $external := strings.HasPrefix $link "http" -}}
+          <a href="{{ $link }}"{{ if $external }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .Name }}</a>
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  </nav>
+</div>
+
+<p class="umd-footer__copyright t-label">
+  &copy; {{ now.Year }} University of Maryland
+</p>

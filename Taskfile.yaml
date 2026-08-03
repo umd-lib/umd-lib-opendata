@@ -14,7 +14,11 @@ tasks:
         desc: "Build the project"
         cmds:
             - echo "Building..."
-            - hugo build
+            # --minify to match the Dockerfile, which has always used it. Without
+            # it a local build and the deployed artifact differ, so anything the
+            # minifier affects would only surface after a deploy. `serve` is left
+            # unminified for readable output while working.
+            - hugo build --minify
 
     serve:
         desc: "Serve the site locally with drafts"
