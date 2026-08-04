@@ -22,4 +22,4 @@ COPY hooks.json /etc/hooks.json
 
 COPY scripts /scripts
 
-CMD [ "/usr/bin/webhook", "-hooks", "/etc/hooks.json", "-verbose", "-logfile", "/dev/fd/1" ]
+CMD [ "/usr/bin/webhook", "-hooks", "/etc/hooks.json", "-template", "-verbose", "-logfile", "/dev/fd/1" ]
