@@ -24,11 +24,6 @@
         "source": "payload",
         "name": "repository.clone_url",
         "envname": "HOOK_repository_clone_url"
-      },
-      {
-        "source": "header",
-        "name": "x-hub-signature-256",
-        "envname": "HOOK_signature"
       }
     ]
   },
