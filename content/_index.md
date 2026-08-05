@@ -42,3 +42,5 @@ details.
   {{< card link="contact" title="Contact Us" icon="user" >}}
   {{< card link="posts" title="Blog" icon="newspaper" >}}
 {{< /cards >}}
+
+foo
