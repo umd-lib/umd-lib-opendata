@@ -22,7 +22,9 @@ Endpoint: <https://archives-api.lib.umd.edu/oai>
 
 Example:
 
-```bash {filename="archival-collections-oaipmh.sh"}
+```bash
+#!/bin/bash
+
 curl "https://archives-api.lib.umd.edu/oai?verb=Identify"
 
 curl "https://archives-api.lib.umd.edu/oai?verb=ListSets"

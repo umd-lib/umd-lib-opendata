@@ -17,7 +17,12 @@ tasks:
             EXTRA_PARAMS: '{{default "" .EXTRA_PARAMS}}'
             HUGO_BUILDOPTS: '{{default "" .HUGO_BUILDOPTS}}'
         cmds:
-            - hugo build -d '{{.BUILD_DIR}}' {{.EXTRA_PARAMS}} {{.HUGO_BUILDOPTS}}
+            - echo "Building..."
+            # --minify to match the Dockerfile, which has always used it. Without
+            # it a local build and the deployed artifact differ, so anything the
+            # minifier affects would only surface after a deploy. `serve` is left
+            # unminified for readable output while working.
+            - hugo build --minify -d '{{.BUILD_DIR}}' {{.EXTRA_PARAMS}} {{.HUGO_BUILDOPTS}}
 
     build:docker:
         desc: "Builds the docs for publishing with pre-configured options (for use within Docker container)"

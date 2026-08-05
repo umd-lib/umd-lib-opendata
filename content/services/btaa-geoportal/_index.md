@@ -7,30 +7,32 @@ connects users to digital geospatial resources, including GIS datasets, web
 services, and digitized historical maps from multiple data clearinghouses and
 library catalogs. The site is solely a search tool and does not host any data.
 
-## OpenSearch
+## JSON API
 
-API Description: [OpenSearch](/apis#opensearch)
+Search Endpoint: <https://geo.btaa.org/api/v1/search>
 
-OpenSearch Description: <https://geo.btaa.org/catalog/opensearch.xml>
+OpenAPI Description: <https://geo.btaa.org/api/openapi.json>
 
-RSS+XML Endpoint: <https://geo.btaa.org/?format=rss>
+Interactive Documentation: <https://geo.btaa.org/api/docs>
 
-JSON Endpoint: <https://geo.btaa.org/?format=json>
+The search endpoint takes `q` for the keyword query, along with `page`,
+`per_page` (maximum 100), `sort`, and facet parameters:
 
-The OpenSearch API is not officially documented by the
-[Geoportal Documentation page](https://sites.google.com/umn.edu/btaa-gdp/about/documentation).
+```bash
+#!/bin/bash
 
-Example: The RSS+XML and JSON endpoints operate using the same set of URL parameters
-used by the website interface, eg these curl commands return the same
-result set:
+curl "https://geo.btaa.org/api/v1/search?q=maryland"
 
-```bash {filename="geoportal-search.sh"}
-curl "https://geo.btaa.org/?search_field=all_fields&q=maryland"
-
-curl "https://geo.btaa.org/?search_field=all_fields&q=maryland&format=rss"
-
-curl "https://geo.btaa.org/?search_field=all_fields&q=maryland&format=json"
+curl "https://geo.btaa.org/api/v1/search?q=maryland&per_page=25&page=2"
 ```
+
+Each record in the `data` array carries its metadata under `attributes.ogm`,
+using [OpenGeoMetadata Aardvark](https://opengeometadata.org/ogm-aardvark/)
+field names such as `dct_title_s`, `dct_publisher_sm`, and
+`gbl_resourceClass_sm`. Individual records are also available from
+`/api/v1/resources/{id}`, and the API exposes an
+[OGC API - Records](https://ogcapi.ogc.org/records/) interface under
+`/api/v1/ogc/`.
 
 Example: [geoportal-search.py](/code/geoportal-search.py)
 

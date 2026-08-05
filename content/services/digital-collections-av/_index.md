@@ -14,7 +14,9 @@ JSON Endpoint: <https://av.lib.umd.edu/catalog.json>
 
 Example:
 
-```bash {filename="digital-collections-av-search.sh"}
+```bash
+#!/bin/bash
+
 PARAMS='search_field=all_fields&q=athletics'
 
 curl "https://av.lib.umd.edu/catalog?$PARAMS"
@@ -34,7 +36,9 @@ Endpoint: <https://api.av.lib.umd.edu/oai/api>
 
 Example:
 
-```bash {filename="digital-collections-av-oaipmh.sh"}
+```bash
+#!/bin/bash
+
 curl "https://api.av.lib.umd.edu/oai/api?verb=Identify"
 
 curl "https://api.av.lib.umd.edu/oai/api?verb=ListSets"

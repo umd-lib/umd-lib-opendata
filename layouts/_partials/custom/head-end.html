@@ -21,9 +21,15 @@
   */ -}}
   {{- /*
     Pinned to the 4.0.1 tag, the first release containing the LIBWEB-6781 layer
-    split. To move to a later release, change this line and nothing else.
+    split. The pin lives in hugo.yaml (params.designSystem.ref) because
+    layouts/_partials/favicons.html fetches from the same repo at the same ref
+    and a second literal here would be a second thing to remember to bump. To
+    move to a later release, change that one line and nothing else.
   */ -}}
-  {{- $dsRef := "4.0.1" -}}
+  {{- $dsRef := site.Params.designSystem.ref -}}
+  {{- if not $dsRef -}}
+    {{- errorf "params.designSystem.ref is not set in hugo.yaml; the design system ref must be pinned in exactly one place" -}}
+  {{- end -}}
   {{- $dsBase := printf "https://raw.githubusercontent.com/umd-lib/umdlib-design-system-theme/%s/css" $dsRef -}}
 
   {{- /*
@@ -158,18 +164,25 @@
           li.appendChild(div);
         });
       }
+      {{- /* querySelectorAll, not querySelector: the page renders three search
+             instances (navbar, mobile drawer, footer) and each has its own
+             results list. The navbar's is first in DOM order but is hidden
+             below 1024px, so binding only to it would leave the fix inactive
+             at exactly the widths where the other two are the reachable ones. */ -}}
       function attach() {
-        var ul = document.querySelector('.hextra-search-results');
-        if (!ul || ul.dataset.umdWrapAttached) { return !!ul; }
-        ul.dataset.umdWrapAttached = '1';
-        var obs = new MutationObserver(function () {
-          obs.disconnect();
-          wrapPrefixes(ul);
+        var lists = document.querySelectorAll('.hextra-search-results');
+        lists.forEach(function (ul) {
+          if (ul.dataset.umdWrapAttached) { return; }
+          ul.dataset.umdWrapAttached = '1';
+          var obs = new MutationObserver(function () {
+            obs.disconnect();
+            wrapPrefixes(ul);
+            obs.observe(ul, { childList: true });
+          });
           obs.observe(ul, { childList: true });
+          wrapPrefixes(ul);
         });
-        obs.observe(ul, { childList: true });
-        wrapPrefixes(ul);
-        return true;
+        return lists.length > 0;
       }
       if (!attach()) {
         var n = 0, iv = setInterval(function () { if (attach() || ++n > 60) clearInterval(iv); }, 100);

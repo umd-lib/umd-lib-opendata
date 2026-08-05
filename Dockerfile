@@ -34,3 +34,4 @@ RUN hugo build --minify --destination /build/html ${HUGO_BUILDOPTS}
 
 FROM nginx:1.30
 COPY --from=makehtml /build/html /usr/share/nginx/html
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf

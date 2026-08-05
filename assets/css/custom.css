@@ -95,6 +95,15 @@
 
 /* ------------------------------------------------------------ utility bar -- */
 
+/* The strip's height, stated once and used twice: below, and in the page-height
+ * calc that has to subtract it. --space-lg is the design system's own 2rem
+ * step, and what the strip already came to at its padding and font size, so
+ * declaring it makes the height true by construction rather than by
+ * coincidence -- and gives the calc something of ours to reference. */
+:root {
+  --umd-utility-bar-height: var(--space-lg, 2rem);
+}
+
 /* The "University of Maryland" strip. Fixed red with white text in both themes,
  * so literal values: var(--maryland-red) would become yellow under .dark-theme
  * and leave white text on yellow. White on #E21833 is 4.7:1, passing AA. */
@@ -103,6 +112,7 @@
   color: #ffffff;
 }
 .umd-utility-bar__inner {
+  min-height: var(--umd-utility-bar-height);
   padding-block: 0.4rem;
   display: flex;
   align-items: center;
@@ -143,14 +153,22 @@
   gap: var(--space-md, 1.5rem);
   min-height: 4rem;
 }
+/* The logo is the row's flexible item. It was flex:0 0 auto, so at phone
+ * widths it held its full width and forced controls past the viewport edge.
+ * Letting it shrink -- and only it -- fits the row at any width; min-width:0
+ * is required for the same reason as the utility row below.
+ *
+ * No max-width here: size comes from the img's width/height attributes,
+ * which navbar.html fills from params.navbar.logo in hugo.yaml. */
 .umd-header__logo {
   display: block;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 .umd-header__logo img {
   display: block;
   height: auto;
-  max-width: 12rem;
+  max-width: 100%;
 }
 
 /* Logo swap. The header background is var(--white), which .dark-theme inverts to
@@ -177,9 +195,39 @@
   gap: var(--space-md, 1.5rem);
   margin-inline-start: var(--space-sm, 1rem);
 }
+/* The nav appears at 768 -- Hextra's md, and also the design system's first
+ * breakpoint. This one is NOT ours to move.
+ *
+ * Hextra's mobile drawer is the only other way into the site, and it is welded
+ * to md in two places we do not control: the sidebar element carries
+ * hx:max-md:[transform:...] classes, and assets/js/core/menu.js toggles those
+ * exact class names. Both are inert above 767.98px. Showing the nav any later
+ * than md therefore opens a band with no navigation at all -- no nav, no
+ * sidebar, and a hamburger that toggles classes which no longer apply. On
+ * pages that disable the sidebar (the home page and the portal landings) that
+ * band has no way out but the browser's back button.
+ *
+ * What made the row overflow was never the nav. It was the secondary items:
+ * the 16rem search field, two icon links and Give Now, which together need
+ * about 1216px. Those are hidden below 1440 instead -- see the utility row
+ * rules below. Hiding them costs no reachability, so their breakpoint is free
+ * to be the design system's rather than the theme's. */
 @media (min-width: 768px) {
   .umd-header__nav {
     display: flex;
+  }
+}
+
+/* Tighten the row's gaps where it is carrying the nav without the desktop
+ * breathing room. At 768 the logo, five nav links and the theme toggle come to
+ * within a few px of the available width at --space-md; --space-sm buys the
+ * margin. Both are design system tokens. */
+@media (max-width: 1439.98px) {
+  .umd-header__inner {
+    gap: var(--space-sm, 1rem);
+  }
+  .umd-header__nav {
+    gap: var(--space-sm, 1rem);
   }
 }
 .umd-header__nav-link {
@@ -187,6 +235,11 @@
   text-decoration: none;
   padding-block: 0.25rem;
   border-bottom: 2px solid transparent;
+  /* Two-word items ("Contact Us") otherwise wrap from 1440px up, where the Give
+   * Now button appears and takes the space the nav had been using, making the
+   * row taller and breaking the baseline the other items sit on. Measured: with
+   * this removed, 1440 wraps and 768-1439 does not. */
+  white-space: nowrap;
 }
 .umd-header__nav-link:hover {
   border-bottom-color: var(--maryland-red, #e21833);
@@ -205,12 +258,80 @@
  * overlays the page rather than being covered. */
 .umd-header__utility {
   margin-inline-start: auto;
+  /* Flex items default to min-width:auto, which refuses to shrink below
+   * min-content, parking this row's right edge instead of letting it compress. */
+  min-width: 0;
   position: relative;
   z-index: 2;
 }
 .umd-header__nav {
   position: relative;
   z-index: 1;
+}
+
+/* Search coverage across the range, stated plainly because it is uneven and
+ * one band has none:
+ *
+ *     below 768    Hextra's drawer search (it is md:hidden, so only here)
+ *     768 - 1023   NO SEARCH -- see below
+ *     1024 and up  this field
+ *
+ * 768 is not available to us in the header. With the logo at its declared width
+ * the row has 9px spare there, and the logo is already shrinking below its
+ * declared size to make even that; the field is a fixed 16rem. So the footer
+ * carries a search field across that band instead -- the same answer as GitHub
+ * and the Atom feed, which the header also cannot fit below 1440. */
+@media (max-width: 1023.98px) {
+  .umd-header .hextra-search-wrapper {
+    display: none;
+  }
+}
+
+/* Between 1024 and the desktop breakpoint the row is tighter than Hextra's
+ * layout assumes, so the field grows into whatever room is left rather than
+ * holding hx:md:w-64 and pushing the row wide. Capped at that same 16rem so it
+ * never exceeds the width the theme intends. */
+@media (min-width: 1024px) and (max-width: 1439.98px) {
+  .umd-header .hextra-search-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 16rem;
+  }
+}
+
+/* The hamburger is the only route into the site below the breakpoint above, so
+ * it appears across exactly the range where the desktop nav does not, which is
+ * below md. That is Hextra's own hx:md:hidden on the button, left in place: the
+ * drawer it opens is welded to md in the theme's JS and sidebar classes, so the
+ * button and the drawer have to share md or the button becomes a control that
+ * does nothing. Nothing to state here. */
+
+/* 44px minimum hit area (WCAG 2.5.8) for icon controls and the hamburger.
+ * Descendant, not child: the theme toggle's button sits inside a wrapper div,
+ * so `> button` would miss it. Buttons get size only, no display -- already
+ * inline-block, and setting display would override the hamburger's own
+ * hx:md:hidden. Give Now is excluded: a text button, already well over 44px,
+ * whose display:none below the desktop breakpoint this would override. */
+.umd-header__utility button,
+.umd-header__utility > a:not(.umd-header__cta) {
+  min-width: 44px;
+  min-height: 44px;
+}
+.umd-header__utility > a:not(.umd-header__cta) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The GitHub and Atom icons come out of the row below the desktop breakpoint --
+ * the row does not fit a phone otherwise. The theme toggle stays regardless,
+ * because hugo.yaml switches off its footer/sidebar copies and this is the
+ * site's only one. custom/footer.html renders these same two entries as text
+ * at every width, so nothing becomes unreachable. */
+@media (max-width: 1439.98px) {
+  .umd-header__utility > a:not(.umd-header__cta) {
+    display: none;
+  }
 }
 
 /* Give Now. Fixed red with white text for the same reason as the utility bar. */
@@ -225,10 +346,31 @@
 .umd-header__cta:hover {
   background: #a90007;
 }
-@media (min-width: 768px) {
+/* Matches the nav breakpoint above; Give Now is part of the same desktop row. */
+@media (min-width: 1440px) {
   .umd-header__cta {
     display: inline-block;
   }
+}
+
+/* ------------------------------------------------------------ page height -- */
+
+/* Keeps the content column at least a viewport tall so the footer never floats
+ * over bare background. Applied to <article> in home.html and list.html,
+ * replacing Hextra's hx:min-h-[calc(100vh-var(--navbar-height))].
+ *
+ * A plain class, not a Tailwind arbitrary value: the theme ships prebuilt CSS,
+ * so an arbitrary value it doesn't already use is never compiled.
+ *
+ * Subtracts --umd-utility-bar-height too, because our navbar emits two chrome
+ * rows where stock Hextra has one -- the university strip above the sticky
+ * header. Uses the strip's own variable rather than Hextra's
+ * --hextra-banner-height (a different, coincidentally same-size feature).
+ *
+ * 100svh, not 100vh: vh is the largest viewport height and overshoots on
+ * mobile by the collapsing toolbar; svh is the smallest, the one that fits. */
+.umd-page-fill {
+  min-height: calc(100svh - var(--navbar-height) - var(--umd-utility-bar-height));
 }
 
 /* ------------------------------------------------------------------- hero -- */
@@ -331,6 +473,73 @@
   color: #f1f1f1;
   margin-block-start: var(--space-sm, 1rem);
 }
+/* Footer search, shown only across 768-1023 -- the one band with no field in
+ * the header. Hidden elsewhere so it never duplicates one already on screen.
+ *
+ * The results panel is absolutely positioned under the input, and this sits low
+ * on a permanently dark surface, so it gets an explicit light panel: the theme
+ * styles those results for the page background, not for this one. */
+.umd-footer__search {
+  display: none;
+  margin-block-end: var(--space-lg, 2rem);
+}
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .umd-footer__search {
+    display: block;
+    max-width: 20rem;
+  }
+}
+.umd-footer__search-label {
+  display: block;
+  color: #ffffff;
+  margin-block-end: var(--space-xs, 0.5rem);
+}
+/* The results panel opens UPWARD here, and only here. Hextra anchors it with
+ * top:full because every other instance sits at the top of the page; this one
+ * is the last thing in the document, so a downward panel would render past the
+ * end of the page -- cut off, or reachable only by scrolling into a region that
+ * does not exist. Opening over the content above is the conventional behaviour
+ * for a bottom-anchored field.
+ *
+ * The width overrides undo hx:w-screen and the max-w-[...calc(100%+20rem)] that
+ * let it overhang the field on both sides. Full-bleed is right for a navbar
+ * field with the whole page beneath it; here it spilled out of the footer
+ * column. Matching the field's own width keeps the two visually joined.
+ *
+ * Explicit dark text because the theme colours these results for the page
+ * background, and this panel sits on the permanently dark footer. */
+/* Hextra styles the input for a light page: a 5% black fill with near-black
+ * text. On the dark footer that fill is invisible against the background and
+ * the text measures 2.57:1, under the 4.5:1 WCAG AA minimum. Literal values
+ * rather than tokens, for the same reason the rest of the footer uses them:
+ * this surface stays dark in both themes, so a token would invert underneath
+ * its own text. */
+.umd-footer__search .hextra-search-input {
+  background: #ffffff;
+  color: #242424;
+  border: 1px solid #6e6e6e;
+}
+.umd-footer__search .hextra-search-input::placeholder {
+  /* 4.6:1 on white. Hextra's gray-500 placeholder is 3.9:1. */
+  color: #6b6b6b;
+  opacity: 1;
+}
+.umd-footer__search kbd {
+  background: #f2f2f2;
+  color: #4a4a4a;
+  border-color: #c9c9c9;
+}
+
+.umd-footer__search .hextra-search-results {
+  top: auto;
+  bottom: 100%;
+  inset-inline: 0;
+  width: 100%;
+  max-width: 100%;
+  margin-block: 0 var(--space-xs, 0.5rem);
+  color: #242424;
+}
+
 .umd-footer__links {
   display: flex;
   flex-direction: column;

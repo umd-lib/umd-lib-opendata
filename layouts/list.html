@@ -15,7 +15,9 @@
       {{ partial "sidebar.html" (dict "context" .) }}
       {{ partial "toc.html" . }}
     {{ end }}
-    <article class="hx:w-full hx:break-words hx:flex hx:min-h-[calc(100vh-var(--navbar-height))] hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
+    {{- /* umd-page-fill replaces Hextra's hx:min-h-[...]; see the page height
+           section of custom.css. */ -}}
+    <article class="umd-page-fill hx:w-full hx:break-words hx:flex hx:min-w-0 hx:justify-center hx:pb-8 hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]">
       <main id="content" class="hx:w-full hx:min-w-0 hextra-max-content-width hx:px-6 hx:pt-4 hx:md:px-12">
         {{ partial "breadcrumb.html" (dict "page" . "enable" false) }}
         <div class="content">
@@ -23,7 +25,15 @@
           {{ .Content }}
         </div>
         <div class="hx:mt-16"></div>
-        {{ partial "components/last-updated.html" . }}
+        {{- /* components/last-updated.html is deliberately not called here. It
+               is gated on site.Params.displayUpdatedDate, which is unset, so it
+               rendered nothing. Setting that param is all it takes to show a
+               date: the date comes from .Lastmod, which falls back to file
+               mtime and needs no git. Note that mtime in the Docker build is
+               the checkout time, so every page would claim the same date;
+               enableGitInfo would fix that but also needs .git, which
+               .dockerignore excludes. Either way it is a deliberate choice,
+               not a broken partial. */ -}}
         {{ partial "components/comments.html" . }}
       </main>
     </article>

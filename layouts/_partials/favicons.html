@@ -1,0 +1,28 @@
+{{- /*
+  Official UMD Libraries favicon, overriding Hextra's default hexagon.
+
+  The icon is checked in at static/favicon.ico rather than fetched at build
+  time, which is the opposite of how custom/head-end.html handles the design
+  system's CSS and fonts. The reason is that most favicon requests carry no
+  <link> to redirect: browsers, bookmarks and feed readers request /favicon.ico
+  directly, as do the site's own /code/*.py files, which are served as plain
+  text and have no <head> at all. Only a file in this repo's static/ can answer
+  those, because a theme's static file loses to ours but wins over anything
+  resources.Copy publishes — so a fetched resource can supply the <link> target
+  and still leave /favicon.ico serving Hextra's hexagon.
+
+  Provenance, to re-check when bumping params.designSystem.ref:
+    umd-lib/umdlib-design-system-theme @ 4.0.1, favicon.ico, verbatim
+    sha256 93a1c362f2a580c348dfa5475164eb0c43a24fd3c6c8692e5df956e7f0846339
+
+  Hextra's favicon.svg, favicon-16x16.png, favicon-32x32.png,
+  apple-touch-icon.png and site.webmanifest are still published by the theme
+  and are still the hexagon. They are deliberately not linked here: the design
+  system ships favicon.ico and nothing else, and cropping or re-rendering the
+  Libraries wordmark to manufacture the missing sizes would be deriving a new
+  brand mark, which is not ours to do. The consequence is that an iOS
+  home-screen bookmark, which requests /apple-touch-icon.png implicitly, still
+  gets the hexagon. Replacing it needs an official asset from the design
+  system, not one made here.
+*/ -}}
+<link rel="icon shortcut" href="{{ "favicon.ico" | relURL }}" sizes="any" />

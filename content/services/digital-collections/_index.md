@@ -12,7 +12,9 @@ Endpoint: <https://api.fcrepo.lib.umd.edu/oai/api>
 
 Example:
 
-```bash {filename="digital-collections-oaipmh.sh"}
+```bash
+#!/bin/bash
+
 curl "https://api.fcrepo.lib.umd.edu/oai/api?verb=Identify"
 
 curl "https://api.fcrepo.lib.umd.edu/oai/api?verb=ListSets"
