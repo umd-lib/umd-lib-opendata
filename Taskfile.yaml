@@ -28,7 +28,7 @@ tasks:
         desc: "Builds the docs for publishing with pre-configured options (for use within Docker container)"
         cmds:
             - task: build
-              vars: {BUILD_DIR: '/target', EXTRA_PARAMS: '--noTimes --noChmod --cleanDestinationDir --logLevel info'}
+              vars: {BUILD_DIR: '/target', EXTRA_PARAMS: '--noTimes --noChmod --logLevel info'}
 
     serve:
         desc: "Serve the site locally with drafts"
