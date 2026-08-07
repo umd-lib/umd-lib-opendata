@@ -1,0 +1,7 @@
+{
+    "ref": "refs/heads/feat/webhook",
+    "repository":
+    {
+        "clone_url": "https://github.com/umd-lib/umd-lib-opendata.git"
+    }
+}

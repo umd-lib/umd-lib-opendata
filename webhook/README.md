@@ -6,9 +6,48 @@ Dockerfile for `opendata-webhook` container which:
 * If an update occurs for the target branch then:
   * Clone the repo
   * Checkout the target branch
-  * Build the Hugo website.
+  * Build the Hugo website to a local directory
+  * Copy the built site to the target directory
 
-Adapted from [kramergroup/hugo-webhook](https://github.com/kramergroup/hugo-webhook/tree/master).
+Adapted from
+[kramergroup/hugo-webhook](https://github.com/kramergroup/hugo-webhook/tree/master).
+
+## Build Strategy
+
+The webhook uses a two-stage build-then-copy approach to work reliably with
+S3-backed target filesystems:
+
+1. **Build locally**: Hugo builds to a local POSIX filesystem directory
+   (`/tmp/ci-*/build`)
+2. **Copy to target**: The built site is copied to `/target` using Python's
+   `shutil`
+
+### Why Not Build Directly to /target?
+
+When `/target` is mounted as an S3-backed (non-POSIX) filesystem (e.g., using
+`mountpoint-s3`), Hugo v0.164.0's static file copying fails with "operation not
+permitted" errors. This happens because:
+
+* Hugo's dependency `github.com/spf13/fsync` attempts to **open and read
+  destination files** before copying to check if they're identical
+* On S3 filesystems, if files from a previous build are still uploading in the
+  background, the filesystem returns `EPERM` when trying to open them
+* This creates a race condition between Hugo's file comparison and S3's
+  eventual consistency model
+
+Generated HTML/CSS/JS files succeed because Hugo writes them directly without
+pre-existing file checks. Static files (`.py`, images, etc.) fail because they
+go through `fsync.Sync()` which always calls `equal()` to compare files.
+
+**References**:
+
+* [mountpoint-s3 #1344](https://github.com/awslabs/mountpoint-s3/issues/1344) -
+  EPERM errors on file reopening
+* Hugo uses `fsync` library which assumes POSIX semantics where written files
+  are immediately readable
+
+Building to a local directory first, then copying to `/target`, avoids Hugo's
+file comparison operations on the S3 filesystem entirely.
 
 ## Testing
 
@@ -33,27 +72,9 @@ docker run --rm -it -p 9000:9000 \
 -e GIT_REPO_BRANCH="feat/webhook" \
 -e GIT_REPO_WEBHOOK_SECRET="example-secret" \
 opendata-webhook:latest
-```
 
-```python
-#!/usr/bin/env python3
-# Generate the example webhook signature using the example secret
-import hashlib
-import hmac
-secret = "example-secret"
-payload='{"ref": "refs/heads/feat/webhook", "repository": {"clone_url": "https://github.com/umd-lib/umd-lib-opendata.git"}}'
-hash_object = hmac.new(secret.encode('utf-8'), msg=payload.encode('utf-8'), digestmod=hashlib.sha256)
-"sha256-" + hash_object.hexdigest()
-```
-
-```bash
 # Trigger webhook to pull and build
-curl \
--X POST \
--H "Content-Type: application/json" \
--H "X-Hub-Signature-256: sha256-155249335ed9c65840b28b438234cae6baa74ce652f7c78623953bda7d90b3a3" \
--d '{"ref": "refs/heads/feat/webhook", "repository": {"clone_url": "https://github.com/umd-lib/umd-lib-opendata.git"}}' \
-http://localhost:9000/hooks/refresh
+bash test-webhook.sh
 
 # Exec into the webhook to observe/debug
 docker exec -it $(docker ps | grep opendata-webhook | awk '{print $1}') /bin/bash

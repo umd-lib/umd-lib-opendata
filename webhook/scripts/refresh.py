@@ -129,9 +129,44 @@ def main():
             result = run_command("git log -1 --oneline", cwd=content_dir)
             log_info(f"git commit is {result.stdout.strip()}")
 
-            # Build the docs
+            # Build the docs to a local directory first
+            # This avoids Hugo's fsync operations on S3-backed filesystems
+            # which can fail with EPERM when Hugo tries to open existing files
+            # for comparison during static file copying. Building to a local
+            # POSIX filesystem first, then copying to /target, is more reliable.
             log_info("Executing task build:docker")
             run_command("task build:docker -v", cwd=content_dir)
+
+            # Copy built site to S3-backed target directory
+            log_info("Copying built site to /target")
+            build_dir = os.path.join(content_dir, 'build')
+
+            # Use rsync-like behavior: overwrite existing files, create new ones
+            # shutil.copytree with dirs_exist_ok=True (Python 3.8+) merges directories
+            if os.path.exists(build_dir):
+                # Remove /target contents first to ensure clean state
+                target_dir = '/target'
+                if os.path.exists(target_dir):
+                    for item in os.listdir(target_dir):
+                        item_path = os.path.join(target_dir, item)
+                        if os.path.isdir(item_path):
+                            shutil.rmtree(item_path)
+                        else:
+                            os.remove(item_path)
+
+                # Copy all contents from build to target
+                for item in os.listdir(build_dir):
+                    src = os.path.join(build_dir, item)
+                    dst = os.path.join(target_dir, item)
+                    if os.path.isdir(src):
+                        shutil.copytree(src, dst, dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(src, dst)
+
+                log_info("Site successfully copied to /target")
+            else:
+                log_error(f"Build directory not found: {build_dir}")
+                sys.exit(1)
 
         finally:
             # Clean up temporary directory
