@@ -1,12 +1,11 @@
 
 FROM debian:stable-slim
 
-RUN apt update && apt install -y curl webhook git golang python3
+RUN apt update && apt install -y curl webhook git golang python3 rclone
 
 # Configuration variables
 ENV GIT_REPO_CONTENT_PATH=''
 ENV GIT_REPO_BRANCH='main'
-ENV TARGET_DIR='/target'
 
 # Pinned so upstream releases can't break this build; bump deliberately after
 # verifying "task build" locally with the new version.
@@ -24,6 +23,7 @@ WORKDIR /tmp
 EXPOSE 9000
 
 COPY hooks.json /etc/hooks.json
+COPY rclone.conf /etc/rclone.conf
 
 COPY scripts /scripts
 

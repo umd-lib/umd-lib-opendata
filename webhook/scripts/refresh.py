@@ -24,6 +24,7 @@ def validate_environment():
     """Validate required environment variables are set."""
     git_repo_branch = os.environ.get('GIT_REPO_BRANCH', '')
     git_repo_url = os.environ.get('GIT_REPO_URL', '')
+    s3_bucket = os.environ.get('S3_BUCKET', '')
 
     if not git_repo_branch:
         log_error("Missing configuration! GIT_REPO_BRANCH cannot be empty")
@@ -33,7 +34,11 @@ def validate_environment():
         log_error("Missing configuration! GIT_REPO_URL cannot be empty")
         sys.exit(1)
 
-    return git_repo_branch, git_repo_url
+    if not s3_bucket:
+        log_error("Missing configuration! S3_BUCKET cannot be empty")
+        sys.exit(1)
+
+    return git_repo_branch, git_repo_url, s3_bucket
 
 def validate_webhook(git_repo_branch, git_repo_url):
     """Validate webhook payload matches expected repository and branch."""
@@ -100,7 +105,7 @@ def main():
         os.environ['PATH'] = f"{current_path}:{go_bin_path}"
 
     # Validate environment
-    git_repo_branch, git_repo_url = validate_environment()
+    git_repo_branch, git_repo_url, s3_bucket = validate_environment()
 
     # Validate webhook
     validate_webhook(git_repo_branch, git_repo_url)
@@ -133,41 +138,23 @@ def main():
             # This avoids Hugo's fsync operations on S3-backed filesystems
             # which can fail with EPERM when Hugo tries to open existing files
             # for comparison during static file copying. Building to a local
-            # POSIX filesystem first, then copying to /target, is more reliable.
+            # POSIX filesystem first, then copying, is more reliable.
             log_info("Executing task build:docker")
             run_command("task build:docker -v", cwd=content_dir)
 
-            # Copy built site to S3-backed target directory
-            log_info("Copying built site to /target")
+            # Copy built site to S3 bucket directory
+            log_info(f"Copying built site to S3 bucket: {s3_bucket}")
+
             build_dir = os.path.join(content_dir, 'build')
 
-            # Use rsync-like behavior: overwrite existing files, create new ones
-            # shutil.copytree with dirs_exist_ok=True (Python 3.8+) merges directories
+            # Use rclone to sync the built site to the S3 bucket
             if os.path.exists(build_dir):
-                # Remove /target contents first to ensure clean state
-                target_dir = '/target'
-                if os.path.exists(target_dir):
-                    for item in os.listdir(target_dir):
-                        item_path = os.path.join(target_dir, item)
-                        if os.path.isdir(item_path):
-                            shutil.rmtree(item_path)
-                        else:
-                            os.remove(item_path)
-
-                # Add a delay to allow filesystem syncs to settle
-                log_info("Waiting 30 seconds before copying to /target")
-                time.sleep(30)
-
-                # Copy all contents from build to target
-                for item in os.listdir(build_dir):
-                    src = os.path.join(build_dir, item)
-                    dst = os.path.join(target_dir, item)
-                    if os.path.isdir(src):
-                        shutil.copytree(src, dst, dirs_exist_ok=True)
-                    else:
-                        shutil.copy2(src, dst)
-
-                log_info("Site successfully copied to /target")
+                try:
+                    run_command(f"rclone --config /etc/rclone.conf --verbose --delete-during sync {build_dir} s3:{s3_bucket}")
+                    log_info(f"Site successfully copied to S3 bucket: {s3_bucket}")
+                except subprocess.CalledProcessError as e:
+                    log_error("rclone sync failed. Check: AWS credentials (env_auth), bucket permissions, network connectivity")
+                    raise
             else:
                 log_error(f"Build directory not found: {build_dir}")
                 sys.exit(1)
