@@ -154,6 +154,10 @@ def main():
                         else:
                             os.remove(item_path)
 
+                # Add a delay to allow filesystem syncs to settle
+                log_info("Waiting 30 seconds before copying to /target")
+                time.sleep(30)
+
                 # Copy all contents from build to target
                 for item in os.listdir(build_dir):
                     src = os.path.join(build_dir, item)
