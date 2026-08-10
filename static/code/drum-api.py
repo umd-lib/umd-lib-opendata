@@ -54,6 +54,6 @@ for item in response['_embedded']['items']:
     else:
         title = "n/a"
 
-    print('---- foo')
+    print('----')
     print(f'Title: {title}')
     print(f'Link:  {link}')
