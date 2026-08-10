@@ -68,6 +68,8 @@ docker build -t opendata-webhook:latest .
 # Create temporary directory for the git repo clone
 mkdir -p ./tmp
 
+# Run minio to test the S3 functionality (Optional)
+
 # Run the opendata-webhook container
 docker run --rm -it -p 9000:9000 \
 --read-only \
@@ -81,8 +83,8 @@ opendata-webhook:latest
 # Trigger webhook to pull and build
 bash test-webhook.sh
 
-# Verify files were synced to S3
-aws s3 ls s3://umd-lib-test-opendata/ --recursive | grep -E "code/|index.html"
+# Verify files were synced to S3 (Optional)
+aws s3 ls s3://umd-lib-local-opendata/ --recursive | grep -E "code/|index.html"
 
 # Exec into the webhook to observe/debug
 docker exec -it $(docker ps | grep opendata-webhook | awk '{print $1}') /bin/bash
