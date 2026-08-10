@@ -1,8 +1,8 @@
 version: '3'
 
 vars:
-  VERSION: '2.2.0'
-  HUGO_BUILDOPTS: ''
+  WEBHOOK_VERSION: '1.0.0'
+  HUGO_BUILDOPTS: '{{default "" (env "HUGO_BUILDOPTS")}}'
 
 tasks:
     default:
@@ -12,13 +12,23 @@ tasks:
 
     build:
         desc: "Build the project"
+        vars:
+            BUILD_DIR: '{{default "build" .BUILD_DIR}}'
+            EXTRA_PARAMS: '{{default "" .EXTRA_PARAMS}}'
+            HUGO_BUILDOPTS: '{{default "" .HUGO_BUILDOPTS}}'
         cmds:
             - echo "Building..."
             # --minify to match the Dockerfile, which has always used it. Without
             # it a local build and the deployed artifact differ, so anything the
             # minifier affects would only surface after a deploy. `serve` is left
             # unminified for readable output while working.
-            - hugo build --minify
+            - hugo build --minify -d '{{.BUILD_DIR}}' {{.EXTRA_PARAMS}} {{.HUGO_BUILDOPTS}}
+
+    build:docker:
+        desc: "Builds the docs for publishing with pre-configured options (for use within Docker container)"
+        cmds:
+            - task: build
+              vars: {BUILD_DIR: 'build', EXTRA_PARAMS: '--logLevel info'}
 
     serve:
         desc: "Serve the site locally with drafts"
@@ -32,9 +42,9 @@ tasks:
             - rm -rf public/
 
     deploy:
-        desc: "Builds and pushes the umd-lib-opendata image"
+        desc: "Builds and pushes the opendata-webhook image"
         cmds:
-            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata:{{.VERSION}} --build-arg HUGO_BUILDOPTS="{{.HUGO_BUILDOPTS}}" .
+            - docker buildx build --platform linux/amd64 --push -t docker.lib.umd.edu/opendata-webhook:{{.WEBHOOK_VERSION}} ./webhook
 
     test-python:
         desc: "Test all Python code examples in static/code/"
