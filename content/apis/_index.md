@@ -51,6 +51,32 @@ service with a minimal amount of implementation logic. Similar to what
 interface descriptions have done for lower-level programming, the OpenAPI
 Specification removes guesswork in calling a service.
 
+## OGC API - Records {#ogc-api-records}
+
+From the [OGC API - Records](https://ogcapi.ogc.org/records/) home page:
+
+> OGC API - Records is a multi-part Standard that offers the capability to
+> create, modify, and query metadata on the Web. The Standard enables the
+> discovery of geospatial resources by standardizing the way collections of
+> descriptive information about the resources (metadata) are exposed.
+
+Part 1: Core is an approved standard of the Open Geospatial Consortium
+(OGC). A Records service tells a client what it offers: `/conformance`
+lists the parts of the standard the server implements, `/collections`
+lists the record collections it holds, and each collection publishes JSON
+Schema documents describing its records — `/queryables` names the
+properties a record carries, `/sortables` names the properties results
+can be ordered by. Records are returned as GeoJSON Features, a format
+GIS tools and spatial data libraries already read.
+
+Where a keyword protocol such as [OpenSearch](#opensearch) matches records
+that mention a term, an OGC catalog's records describe geospatial
+resources — datasets, web services, scanned maps — with typed properties
+such as resource class, access rights, and spatial coverage, and one
+catalog may aggregate records from many institutions.
+
+For more information see <https://ogcapi.ogc.org/records/>.
+
 ## Search/Retrieve via URL (SRU) {#sru}
 
 From the [Search/Retrieve via URL](https://en.wikipedia.org/wiki/Search/Retrieve_via_URL)
