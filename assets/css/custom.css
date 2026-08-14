@@ -383,8 +383,11 @@
   border-bottom: 1px solid var(--light-gray, #e6e6e6);
 }
 
+/* Black, not red: red is this site's link colour (.content a), so a red eyebrow
+ * reads as a link that does not go anywhere. The token, never a literal --
+ * .dark-theme remaps --black to #ffffff and the hero surface inverts with it. */
 .umd-hero__eyebrow {
-  color: var(--maryland-red, #e21833);
+  color: var(--black, #000000);
 }
 .umd-hero__headline {
   /* .t-display supplies Barlow Condensed 700 italic at 3rem. */
