@@ -36,7 +36,7 @@ details.
 ## Explore
 
 {{< cards >}}
-  {{< card link="services" title="Services" subtitle="Ten sources of UMD data, and how to query each one." >}}
+  {{< card link="services" title="Services" subtitle="Sources of UMD data, and how to query each one." >}}
   {{< card link="apis" title="APIs" subtitle="Runnable examples for every protocol we serve: OAI-PMH, SRU, OpenSearch, OGC API - Records, REST and JSON-LD." >}}
   {{< card link="datasets" title="Datasets" subtitle="Bulk data for download. Nothing published yet." >}}
   {{< card link="contact" title="Contact Us" subtitle="Ask about an endpoint, or tell us what data you want published." >}}
