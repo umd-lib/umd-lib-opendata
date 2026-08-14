@@ -5,6 +5,18 @@ title: APIs
 Introduction to various Application Programming Interfaces (API) (and metadata
 formats) available for dynamic query of our services.
 
+## Running the examples
+
+Python code examples on this site are self-contained
+[uv scripts](https://docs.astral.sh/uv/guides/scripts/): each declares its
+Python version and dependencies inline, following
+[PEP 723](https://peps.python.org/pep-0723/), so
+[uv](https://docs.astral.sh/uv/) can run any example — downloaded locally or
+straight from its published URL — with no environment setup or module
+installation. See the [project
+README](https://github.com/umd-lib/umd-lib-opendata#python-code-examples) for
+details.
+
 ## OAI-PMH
 
 From the [OAI-PMH](https://www.openarchives.org/pmh/) home page:
