@@ -383,8 +383,11 @@
   border-bottom: 1px solid var(--light-gray, #e6e6e6);
 }
 
+/* Black, not red: red is this site's link colour (.content a), so a red eyebrow
+ * reads as a link that does not go anywhere. The token, never a literal --
+ * .dark-theme remaps --black to #ffffff and the hero surface inverts with it. */
 .umd-hero__eyebrow {
-  color: var(--maryland-red, #e21833);
+  color: var(--black, #000000);
 }
 .umd-hero__headline {
   /* .t-display supplies Barlow Condensed 700 italic at 3rem. */
@@ -423,12 +426,22 @@
   height: 100%;
   box-sizing: border-box;
 }
+/* No colour here on purpose. The headline is an <a> inside .content, so it takes
+ * the site link colour from `.content a` above: --dark-red in light, the brand
+ * yellow under .dark-theme. Setting a colour on this class would not apply
+ * anyway -- .umd-card__headline is (0,1,0) and .content a is (0,1,1), so the
+ * element selector wins. A rule that does apply needs .content in front of it,
+ * and a .dark variant besides: .dark .content a is (0,2,1) and would still beat
+ * a bare .content .umd-card__headline at (0,2,0).
+ *
+ * Hover changes the underline only. The previous rule also shifted the colour to
+ * --maryland-red, which was written for a black headline that never rendered:
+ * against white it moved 7.81:1 down to 4.56:1, and under .dark-theme it did
+ * nothing at all, both tokens resolving to #ffd200. */
 .umd-card__headline {
-  color: var(--black, #000000);
   text-decoration: none;
 }
 .umd-card__headline:hover {
-  color: var(--maryland-red, #e21833);
   text-decoration: underline;
 }
 .umd-card__text {
