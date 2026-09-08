@@ -1,6 +1,6 @@
 ---
 publishDate: '2026-09-08T00:00:02-04:00'
-draft: true
+draft: false
 title: 'Running Code Examples Directly from the Site'
 type: blog
 ---
