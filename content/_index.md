@@ -14,7 +14,7 @@ hero:
 This collection of [open data](https://en.wikipedia.org/wiki/Open_data)
 resources was created to promote the use of data created by the UMD Libraries
 and made available to our community through strategic partnerships. Most of
-these services come with Python examples you can run as they are.
+these  services come with Python examples you can run as they are.
 
 ## Explore
 
