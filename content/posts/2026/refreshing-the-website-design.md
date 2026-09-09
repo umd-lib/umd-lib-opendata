@@ -1,6 +1,6 @@
 ---
 publishDate: '2026-09-08T00:00:00-04:00'
-draft: true
+draft: false
 title: 'Refreshing the Website Design'
 type: blog
 ---

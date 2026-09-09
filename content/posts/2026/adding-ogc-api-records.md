@@ -1,6 +1,6 @@
 ---
 publishDate: '2026-09-08T00:00:01-04:00'
-draft: true
+draft: false
 title: 'Adding OGC API - Records'
 type: blog
 ---
