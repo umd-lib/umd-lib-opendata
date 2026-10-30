@@ -1,8 +1,8 @@
 
-FROM debian:stable-slim
+FROM debian:trixie-20261027-slim
 
-RUN apt update && apt install -y curl webhook git golang python3 rclone
-
+RUN apt update && \
+    apt install -y ca-certificates curl webhook git golang python3 rclone
 # Configuration variables
 ENV GIT_REPO_CONTENT_PATH=''
 ENV GIT_REPO_BRANCH='main'
